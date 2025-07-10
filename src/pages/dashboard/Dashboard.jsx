@@ -1,9 +1,12 @@
 import Cart from "../../components/dashboard/Cart";
 import CustomerDetail from "../../components/dashboard/CustomerDetail"
 import { useState } from "react";
+import PreviewBillModal from "../../components/dashboard/PreviewBillModal";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [isPreviewModalOpen,setIsPreviewModalOpen]=useState(true)
+
   const tabs = [
     {
       name: "cart",
@@ -20,10 +23,25 @@ const Dashboard = () => {
 
   })
 
+  function handleNextBtn(){
+        setActiveTab(activeTab+1)
+  }
+
+  function handlePreviousBtn(){
+    setActiveTab(activeTab-1)
+  }
+
+  function handleSubmitBtn(){
+    console.log('purchase done bill->',data);
+    
+  }
+
   const ActiveComponent = tabs[activeTab].Component;
 
   return (
     <>
+    <div className="min-h-screen w-full flex flex-col ">
+
       {/* Header Section */}
       <div className="text-center mb-4 sm:mb-4 lg:mb-7 mt-7">
         <div className="inline-flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
@@ -42,6 +60,20 @@ const Dashboard = () => {
       </div>
       {/* Header Section End */}
       <ActiveComponent data={data} setData={setData}/>
+
+      <div className="btn-container w-full flex justify-center mt-4 ">
+        {activeTab<1&& <button onClick={handleNextBtn} className="p-4 text-black bg-white  cursor-pointer">Next</button>}
+        {activeTab>0&&<button onClick={handlePreviousBtn} className="p-4 text-black bg-white cursor-pointer">Previous</button>}
+        {activeTab===1&&<button onClick={handleSubmitBtn} className="p-4 text-black bg-white cursor-pointer">Submit</button>}
+
+      </div>
+          </div>
+
+
+    {isPreviewModalOpen &&
+
+      <PreviewBillModal data={data} setData={setData} handleModal={()=>setIsPreviewModalOpen(!isPreviewModalOpen)}/>
+    }
     </>
   );
 };

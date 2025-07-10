@@ -129,7 +129,7 @@ const {cartData}=data
 console.log('cartData->',cartData);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white ">
+    <div className="h-fit bg-[#0B0B0B] text-white ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8  sm:py-6 lg:py-8">
    
 
@@ -238,9 +238,9 @@ console.log('cartData->',cartData);
       </div>
 
       {/*<!--============== Cart Container ==============-->*/}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 sm:py-6 lg:py-8">
-        <div className="max-w-4xl mx-auto mb-4 sm:mb-6 lg:mb-8">
-          <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+      <div className="container mx-auto px-4  sm:px-6 lg:px-8 sm:py-6 lg:py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-zinc-900/50 backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
             <div className="flex items-center justify-between mb-2 sm:mb-3">
               <div className="flex items-center space-x-2">
                 <span className="text-xs sm:text-sm text-gray-400">
@@ -250,7 +250,7 @@ console.log('cartData->',cartData);
             </div>
 
             {/*<!--==============  items Table ==============-->*/}
-            <div className="flex h-fit py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
+            <div className="flex h-full py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
               {cartData && cartData.length > 0 ? (
                 <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950/50">
                   <div className="relative w-full overflow-auto">
