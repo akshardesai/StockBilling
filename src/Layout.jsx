@@ -9,6 +9,7 @@ function Layout() {
     setIsOpen((prev) => !prev);
   };
 
+
   return (
     <>
       <aside className="slider fixed top-0 z-10">
@@ -22,19 +23,27 @@ function Layout() {
           <li
             className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center"
           >
-            <NavLink 
-            to="/">
-              <i className="fa-solid fa-pen-to-square text-[#D7FF9C]"></i>
+        <NavLink 
+  to="/"
+  className={({ isActive }) => isActive ? 'text-[#D7FF9C]' : 'text-white'}
+>
+  <i className="fa-solid fa-pen-to-square"></i>
+</NavLink>
+
+
+          </li>
+          <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
+            <NavLink to="stock"
+            className={({isActive})=>isActive?"text-[#d7ff9c]":"text-white"}
+            >
+            <i className="ri-store-3-fill"></i>
             </NavLink>
           </li>
           <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
-            <NavLink to="stock">
-            <i className="ri-store-3-fill text-white"></i>
-            </NavLink>
-          </li>
-          <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
-            <NavLink to="logs">
-            <i className="ri-chat-search-fill text-white"></i>
+            <NavLink to="logs"
+            className={({isActive})=>isActive?"text-[#d7ff9c]":"text-white"}
+            >
+            <i className="ri-chat-search-fill"></i>
             </NavLink>
           </li>
 

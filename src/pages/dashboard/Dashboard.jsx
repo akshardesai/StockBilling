@@ -2,10 +2,11 @@ import Cart from "../../components/dashboard/Cart";
 import CustomerDetail from "../../components/dashboard/CustomerDetail"
 import { useState } from "react";
 import PreviewBillModal from "../../components/dashboard/PreviewBillModal";
+import { createBill } from "../../utils/InvoicingTables";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [isPreviewModalOpen,setIsPreviewModalOpen]=useState(true)
+  const [isPreviewModalOpen,setIsPreviewModalOpen]=useState(false)
 
   const tabs = [
     {
@@ -32,7 +33,19 @@ const Dashboard = () => {
   }
 
   function handleSubmitBtn(){
-    console.log('purchase done bill->',data);
+    //send to db 
+    //add confirm option before submit
+    //db success remove submit option
+    //db success then open // allow  print option / modal
+
+    createBillDB(data)
+    console.log('bill created ',data);
+    
+  }
+
+  async function createBillDB(data){
+    const response = await createBill(data)
+    console.log('response->',response);
     
   }
 
