@@ -1,0 +1,20 @@
+@media print {
+  /* Styles applied only when printing */
+       html, body {
+      height:100vh; 
+      margin: 0 !important; 
+      padding: 0 !important;
+      overflow: hidden;
+    }
+
+  .no-print {
+    display: none; /* Hide elements with class 'no-print' in print */
+  }
+
+  @page {
+    margin: 0;
+  }
+
+
+
+}

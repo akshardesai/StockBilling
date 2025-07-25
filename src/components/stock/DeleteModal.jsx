@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { deleteHeight, deleteSize } from "../../utils/StockTables";
-import LoadingNotification from "./LoadingNotification";
+import LoadingNotification from "../LoadingNotification";
+LoadingNotification
 
 
 const DeleteModal = ({

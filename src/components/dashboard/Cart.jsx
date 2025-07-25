@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { addHeight, readAllProduct } from "../../utils/StockTables";
 
-const Cart = ({ data, setData }) => {
+const Cart = ({ data, setData, additionalInfo=null}) => {
   const [products, setProducts] = useState([]);
   const [selectedSize, setSelectedSize] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +21,7 @@ const Cart = ({ data, setData }) => {
       const data = await readAllProduct();
       if (data) {
         setProducts(data.documents);
-        console.log(data.documents);
+        // (data.documents);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -49,7 +49,7 @@ const Cart = ({ data, setData }) => {
     const price = priceInput;
 
     if (price <= 0 || isNaN(price)) {
-      console.log("error he ji yo to");
+      // ("error he ji yo to");
       setIsPriceModal(false);
       setPriceInput("");
       return;
@@ -70,13 +70,13 @@ const Cart = ({ data, setData }) => {
   }
   
   const handleEditPriceSubmit = ()=>{
-    console.log("heighttoedit =>",heightToAdd);
+    // ("heighttoedit =>",heightToAdd);
     
     setData((prevData)=>{
        const oldCartData = prevData.cartData.map((sizeItem)=>{
           return{...sizeItem,
             heights:sizeItem.heights.map((heightItem)=>{
-              console.log('height item->',heightItem);
+              // ('height item->',heightItem);
               
               if (heightItem.$id!==heightToAdd.$id) {
                 return heightItem
@@ -88,7 +88,7 @@ const Cart = ({ data, setData }) => {
             })
           }
        })
-       console.log("old cart data returned->",oldCartData);
+      // ("old cart data returned->",oldCartData);
        
        return {...prevData,cartData:oldCartData}
        
@@ -107,7 +107,7 @@ const Cart = ({ data, setData }) => {
     );
 
     if (exists) {
-      // console.log("price->", price);
+      // ("price->", price);
 
       AddHeightToCart(h, h.price);
     } else {
@@ -117,7 +117,7 @@ const Cart = ({ data, setData }) => {
   };
 
   const AddHeightToCart = (heightAdd, priceToAdd) => {
-    console.log("hello", priceToAdd);
+    // ("hello", priceToAdd);
 
     if (!selectedSize) return;
 
@@ -131,7 +131,7 @@ const Cart = ({ data, setData }) => {
       const existingSizeInCart = prevCart.cartData.find(
         (item) => item.$id === sId
       );
-      // console.log('existing size index ->',existingSizeIndex);
+      // ('existing size index ->',existingSizeIndex);
 
       // (1) the size is not in the cart yet
       if (!existingSizeInCart) {
@@ -146,10 +146,10 @@ const Cart = ({ data, setData }) => {
         //return a new array with the old items plus the new one with unique size
         return { ...prevCart, cartData: [...prevCart.cartData, newProduct] };
       } else {
-        console.log("size exists", prevCart.cartData);
+        // ("size exists", prevCart.cartData);
 
         const result = prevCart.cartData.map((sizeItem) => {
-          // console.log('inside map returning something wrong',sizeItem);
+          // ('inside map returning something wrong',sizeItem);
 
           if (sizeItem.$id !== sId) {
             return sizeItem;
@@ -190,7 +190,7 @@ const Cart = ({ data, setData }) => {
           };
         });
 
-        // console.log('result',result);
+        //('result',result);
 
         return { ...prevCart, cartData: result };
       }
@@ -200,8 +200,8 @@ const Cart = ({ data, setData }) => {
   };
 
   const RemovHeightFromCart = (heightToRemove) => {
-    console.log("height to remove ->", heightToRemove);
-    console.log("inside cart -> ", data.cartData);
+    // ("height to remove ->", heightToRemove);
+    // ("inside cart -> ", data.cartData);
 
     const heightId = heightToRemove.$id;
     const sizeId = heightToRemove.size_id;
@@ -260,7 +260,7 @@ const Cart = ({ data, setData }) => {
   }
   const { cartData } = data;
 
-  // console.log('cartData->',cartData);
+  // ('cartData->',cartData);
 
   return (
     <>
@@ -268,7 +268,7 @@ const Cart = ({ data, setData }) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8  sm:py-6 lg:py-8">
           {/* Size Filter Section */}
           <div className="max-w-4xl mx-auto mb-4 sm:mb-6 lg:mb-8">
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+            <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
@@ -308,7 +308,7 @@ const Cart = ({ data, setData }) => {
         {/*<!--============== Selected Size Height Table ==============-->*/}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 sm:py-6 lg:py-8">
           <div className="max-w-4xl mx-auto mb-4 sm:mb-6 lg:mb-8">
-            <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+            <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
@@ -362,7 +362,7 @@ const Cart = ({ data, setData }) => {
                                     onClick={() => RemovHeightFromCart(h)}
                                     className="inline-flex items-center me-3 justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-red-400 text-zinc-900 shadow-sm hover:bg-red-500 h-fit px-2 py-1"
                                   >
-                                    <i class="ri-delete-bin-fill"></i>
+                                    <i className="ri-delete-bin-fill"></i>
                                   </button>
                                 ) : (
                                   ""
@@ -375,7 +375,7 @@ const Cart = ({ data, setData }) => {
                                   }}
                                   className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-zinc-50 text-zinc-900 shadow-sm hover:bg-zinc-50/90 h-fit px-2 py-1"
                                 >
-                                  <i class="ri-add-box-line"></i>
+                                  <i className="ri-add-box-line"></i>
                                 </button>
                               </td>
                             </tr>
@@ -395,7 +395,7 @@ const Cart = ({ data, setData }) => {
         {/*<!--============== Cart Container ==============-->*/}
         <div className="container mx-auto px-4  sm:px-6 lg:px-8 sm:py-6 lg:py-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-zinc-900/50 backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+            <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
@@ -522,7 +522,7 @@ const Cart = ({ data, setData }) => {
           onClick={() => setIsPriceModal(false)}
           className="absolute top-1 right-4"
         >
-          <i class="ri-close-large-line"></i>
+          <i className="ri-close-large-line"></i>
         </button>
       </div>
 
@@ -562,7 +562,7 @@ const Cart = ({ data, setData }) => {
           onClick={() => setIsEditPriceModal(false)}
           className="absolute top-1 right-4"
         >
-          <i class="ri-close-large-line"></i>
+          <i className="ri-close-large-line"></i>
         </button>
       </div>
     </>

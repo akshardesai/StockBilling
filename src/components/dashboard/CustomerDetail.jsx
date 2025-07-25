@@ -1,41 +1,56 @@
-import { Fragment } from "react";
+import { Fragment, useRef, useState } from "react";
 
-const CustomerDetail = ({data,setData}) => {
+const CustomerDetail = ({data,setData,additionalInfo=null}) => {
 
   const {cartData}=data
-
   const {name}=data
   const{number}=data
+ 
+ 
 
+  
  function handleInputUpdate(e){
   setData((prevData)=>{
 
+    if (e.target.name==="number") {
+      const onlyNumbers = e.target.value.replace(/\D/g,"");
+      return{
+      ...prevData,
+      [e.target.name]:onlyNumbers
+    }
+    }
 
-    return{
+    if (e.target.name==="name") {
+      return{
       ...prevData,
       [e.target.name]:e.target.value
     }
+    }
+
+    
   })
  }
+  
 
   return (
     <div className=" px-4">
 
       {/*<!--============== Customer Info Container ==============-->*/}
-      <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
+      <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
       
       <div className="form-container">
         <form  className=''>
           <div className="flex flex-col  px-4 mb-2">
 
           <label htmlFor="name" className='mb-1 ps-1'>Name</label>
-          <input  type="text" value={name} onChange={(e)=>handleInputUpdate(e)} name='name' className='w-ful px-2 bg-white  rounded-xl py-2 text-black focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500'/>
+          <input  type="text" placeholder="John" value={name?name:""} onChange={(e)=>handleInputUpdate(e)} name='name' className='w-ful px-2 bg-white  rounded-xl py-2 text-black focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500'/>
           </div>
 
           <div className="flex flex-col  px-4 mb-2">
 
           <label htmlFor="number" className='mb-1 ms-1'>Number</label>
-          <input type="number" value={number}  onChange={(e)=>handleInputUpdate(e)} name='number' className='w-ful px-2 bg-white  rounded-xl py-2 text-black  focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500' />
+          <input type="text" placeholder="9825076985" value={number?number:""} name="number"  onChange={(e)=> handleInputUpdate(e)
+ }  className='w-ful px-2 bg-white  rounded-xl py-2 text-black  focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500' />
           </div>
 
         </form>
@@ -48,7 +63,7 @@ const CustomerDetail = ({data,setData}) => {
         {/*<!--============== Cart Container ==============-->*/}
            <div className="container mx-auto   sm:px-6 lg:px-8 sm:py-6 lg:py-8">
              <div className="max-w-4xl mx-auto">
-               <div className="bg-zinc-900/50 backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+               <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
                  <div className="flex items-center justify-between mb-2 sm:mb-3">
                    <div className="flex items-center space-x-2">
                      <span className="text-xs sm:text-sm text-gray-400">
@@ -134,6 +149,7 @@ const CustomerDetail = ({data,setData}) => {
                </div>
              </div>
            </div>
+
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { updateHeight } from "../../utils/StockTables";
-import LoadingNotification from "./LoadingNotification";
+import LoadingNotification from "../LoadingNotification";
+
 
 const EditHeightModal = ({
   id,

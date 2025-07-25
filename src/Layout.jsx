@@ -32,11 +32,21 @@ function Layout() {
 
 
           </li>
+
+               <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
+            <NavLink to="bills"
+            className={({isActive})=>isActive?"text-[#d7ff9c]":"text-white"}
+            >
+            <i className="ri-survey-line"></i>
+            </NavLink>
+          </li>
+
+
           <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
             <NavLink to="stock"
             className={({isActive})=>isActive?"text-[#d7ff9c]":"text-white"}
             >
-            <i className="ri-store-3-fill"></i>
+          <i className="ri-truck-fill"></i>
             </NavLink>
           </li>
           <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
@@ -46,6 +56,7 @@ function Layout() {
             <i className="ri-chat-search-fill"></i>
             </NavLink>
           </li>
+     
 
           </ul>
           <div

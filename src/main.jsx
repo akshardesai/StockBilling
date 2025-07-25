@@ -19,6 +19,7 @@ import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Stock from "./pages/Stock/Stock.jsx";
 import Logs from "./pages/logs/Logs.jsx"
 import Layout from "./Layout.jsx"
+import Bills from "./pages/bills/Bills.jsx";
 
 
 
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
       <Route path="" element={<Dashboard />} />
       <Route path="stock" element={<Stock />} />
       <Route path="logs" element={<Logs />} />
+      <Route path="bills" element={<Bills/>} />
     </Route>
   )
 );

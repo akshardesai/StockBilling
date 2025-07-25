@@ -6,9 +6,9 @@ import {
 } from "../../utils/StockTables";
 import DeleteModal from "./DeleteModal";
 import EditHeightModal from "./EditHeightModal";
-import Alert from "./Alert";
-import SuccessNotification from "./SuccessNotification";
-import LoadingNotification from "./LoadingNotification";
+import Alert from "../Alert";
+import SuccessNotification from "../SuccessNotification";
+import LoadingNotification from "../LoadingNotification";
 
 const AllProducts = ({ products, setProducts }) => {
   const [isOpenHeightModal, setIsOpenHeightModal] = useState(false);
@@ -180,7 +180,7 @@ const AllProducts = ({ products, setProducts }) => {
 
   async function insertHeight(id, height, quantity) {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await addHeight(id, height, quantity);
 
       if (response.success) {
@@ -215,19 +215,18 @@ const AllProducts = ({ products, setProducts }) => {
 
         // Close the modal after successful addition
         closeHeightModal();
-         setIsLoading(false)
+        setIsLoading(false);
         setShowSuccessNotification(true);
         setAlertMessage("Height Added");
         // ("Height added successfully and DOM updated");
-       
       } else {
-         setIsLoading(false)
+        setIsLoading(false);
         setShowAlert(true);
         setAlertMessage(response.error);
       }
     } catch (error) {
       // ("catched an error in allproducts.jsx ->", error);
-       setIsLoading(false)
+      setIsLoading(false);
       setShowAlert(true);
       setAlertMessage(error);
     }
@@ -235,7 +234,7 @@ const AllProducts = ({ products, setProducts }) => {
 
   // ("inside products page", products);
 
-    if (products.length === 0) {
+  if (products.length === 0) {
     return <p className="text-center mt-4">No products yet.</p>;
   }
 
@@ -260,8 +259,8 @@ const AllProducts = ({ products, setProducts }) => {
                 <p className="font-bold text-white text-sm sm:text-base truncate max-w-[200px]">
                   {product.size}
                 </p>
-                <button 
-                disabled={isLoading}
+                <button
+                  disabled={isLoading}
                   onClick={() => handleDeleteModal(product.$id)}
                   className="removeProductBtn px-2 py-1 rounded-full bg-black text-white text-xs sm:text-sm"
                 >
@@ -310,23 +309,21 @@ const AllProducts = ({ products, setProducts }) => {
                                 className="inline-flex items-center justify-center p-1 me-1 sm:me-3 text-sm font-medium h-6 w-6 text-gray-400 bg-gray-800 border border-gray-600 rounded-full focus:outline-none hover:bg-gray-700 hover:border-gray-600 focus:ring-4 focus:ring-gray-700 cursor-pointer"
                                 type="button"
                               >
-                               
-                                  <svg
-                                    className="w-2 h-2 sm:w-3 sm:h-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 18 2"
-                                  >
-                                    <path
-                                      stroke="currentColor"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M1 1h16"
-                                    />
-                                  </svg>
-                                
+                                <svg
+                                  className="w-2 h-2 sm:w-3 sm:h-3"
+                                  aria-hidden="true"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 18 2"
+                                >
+                                  <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M1 1h16"
+                                  />
+                                </svg>
                               </button>
                               <div className="mx-1 sm:mx-0">
                                 <span
@@ -355,9 +352,7 @@ const AllProducts = ({ products, setProducts }) => {
                                 className="inline-flex items-center justify-center h-6 w-6 p-1 ms-1 sm:ms-3 text-sm font-medium text-gray-400 bg-gray-800 border border-gray-600 rounded-full focus:outline-none hover:bg-gray-700 hover:border-gray-600 focus:ring-4 focus:ring-gray-700"
                                 type="button"
                               >
-                              
-                     
-                     <svg
+                                <svg
                                   className="w-2 h-2 sm:w-3 sm:h-3"
                                   aria-hidden="true"
                                   xmlns="http://www.w3.org/2000/svg"
@@ -378,7 +373,7 @@ const AllProducts = ({ products, setProducts }) => {
                           <td className="px-2 sm:px-6 py-4">
                             <div className="flex items-center justify-center gap-1 sm:gap-3">
                               <button
-                              disabled={isLoading}
+                                disabled={isLoading}
                                 onClick={() =>
                                   handleEditHeightModal(
                                     height.$id,
@@ -392,7 +387,7 @@ const AllProducts = ({ products, setProducts }) => {
                                 <i className="fa-solid fa-file-pen"></i>
                               </button>
                               <button
-                              disabled={isLoading}
+                                disabled={isLoading}
                                 onClick={() =>
                                   handleDeleteHeightModal(
                                     height.$id,
@@ -545,9 +540,7 @@ const AllProducts = ({ products, setProducts }) => {
         onClose={() => setShowSuccessNotification(false)}
       />
 
-      <LoadingNotification
-      showLoading={isLoading}
-      />
+      <LoadingNotification showLoading={isLoading} />
     </>
   );
 };
