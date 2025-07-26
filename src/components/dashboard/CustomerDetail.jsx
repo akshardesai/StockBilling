@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from "react";
 
-const CustomerDetail = ({data,setData,additionalInfo=null}) => {
+const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
 
   const {cartData}=data
   const {name}=data
@@ -40,17 +40,17 @@ const CustomerDetail = ({data,setData,additionalInfo=null}) => {
       
       <div className="form-container">
         <form  className=''>
-          <div className="flex flex-col  px-4 mb-2">
+          <div className="flex flex-col   px-4 mb-4">
 
-          <label htmlFor="name" className='mb-1 ps-1'>Name</label>
-          <input  type="text" placeholder="John" value={name?name:""} onChange={(e)=>handleInputUpdate(e)} name='name' className='w-ful px-2 bg-white  rounded-xl py-2 text-black focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500'/>
+          <label htmlFor="name" className='mb-1 ps-1 font-semibold'>Name</label>
+          <input  type="text" placeholder="John" value={name?name:""} onChange={(e)=>handleInputUpdate(e)} name='name' className='w-ful px-2 bg-black  rounded-lg py-2 text-white border-2 border-gray-400/40 focus:border-lime-300/60  focus:outline-none  '/>
           </div>
 
           <div className="flex flex-col  px-4 mb-2">
 
-          <label htmlFor="number" className='mb-1 ms-1'>Number</label>
+          <label htmlFor="number" className='mb-1 ms-1 font-semibold'>Number</label>
           <input type="text" placeholder="9825076985" value={number?number:""} name="number"  onChange={(e)=> handleInputUpdate(e)
- }  className='w-ful px-2 bg-white  rounded-xl py-2 text-black  focus:border-none focus:ring-3 focus:outline-none focus:ring-lime-500' />
+ }  className='w-ful px-2 bg-black  rounded-lg py-2 text-white  focus:border-lime-300/60 focus:outline-none border-2 border-gray-400/40' />
           </div>
 
         </form>

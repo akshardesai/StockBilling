@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from "react";
 import "./print.css";
 
-const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab }) => {
-  const [isBillModalOpen, setIsBillModalOpen] = useState(true);
+const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab,validationArray}) => {
+  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
   const { cartData } = data;
   const { name, number } = data;
-  const { $id, $createdAt } = additionalInfo;
+  const { $id, $createdAt } = additionalInfo||1;
   /* Dummy data so we can loop */
   const invoices = [
     {
@@ -54,17 +54,48 @@ const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab }) => {
     setData({ name: "", number: null, cartData: [] });
   };
 
+  console.log('validation array -> ',validationArray);
+  
+
   return (
     <>
       {!isBillModalOpen && (
-        <div className="w-full  h-fit flex justify-center">
-          <div className="flex flex-col items-center w-full gap-7">
-            <div className="history-entry w-[80%] mt-[40%] bg-[#212121] border-2 border-[#D7FF9C]/30 p-4 rounded-lg   ">
-              <p className="text-lg font-medium text-center">
-                Successfully Submited Bill In{" "}
-                <span className="text-[#D7FF9C]">Database</span>. Proceed to
-                print{" "}
+        <div className="w-full  h-fit flex justify-center mt-[30%]">
+          <div className="flex flex-col items-center w-full gap-4">
+
+            <div className="history-entry w-[60%] flex justify-between  bg-[#171717] border-2 border-gray-600 p-2 rounded-lg    ">
+              <p className="text-md font-medium ">
+              <span className="text-gray-400">1.</span> Items In Stock
               </p>
+             
+              {
+                validationArray.includes(1)?( <i class="ri-checkbox-circle-fill text-md text-lime-300 "></i>):( <i class="ri-close-circle-fill text-md text-rose-400"></i>)
+              }
+            </div>
+            <div className="history-entry w-[60%] flex justify-between bg-[#171717] border-2 border-gray-600 p-2 rounded-lg   ">
+              <p className="text-md font-medium ">
+           <span className="text-gray-400">2.</span>  Bill Submitted
+              </p>
+             {
+                validationArray.includes(2)?( <i class="ri-checkbox-circle-fill text-md text-lime-300 "></i>):( <i class="ri-close-circle-fill text-md text-rose-400"></i>)
+              }
+            </div>
+            <div className="history-entry w-[60%] flex justify-between bg-[#171717] border-2 border-gray-600 p-2 rounded-lg   ">
+              <p className="text-md font-medium ">
+            <span className="text-gray-400">3.</span>  Cart Submitted
+              </p>
+             {
+                validationArray.includes(3)?( <i class="ri-checkbox-circle-fill text-md text-lime-300 "></i>):( <i class="ri-close-circle-fill text-md text-rose-400"></i>)
+              }
+            </div>
+            <div className="history-entry w-[60%]  flex justify-between bg-[#171717] border-2 border-gray-600 p-2 rounded-lg   ">
+              <p className="text-md font-medium ">
+            <span className="text-gray-400">4.</span>  Stock Reduced
+              </p>
+             {
+                validationArray.includes(4)?( <i class="ri-checkbox-circle-fill text-md text-lime-300 "></i>):( <i class="ri-close-circle-fill text-md text-rose-400"></i>)
+              }
+
             </div>
 
             {/* <div className="history-entry w-[80%] mt-[40%] bg-[#212121] border-2 border-red-500/30 p-4 rounded-lg border-2 border-gray-800  ">
@@ -72,26 +103,23 @@ const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab }) => {
                        
                     </div> */}
 
-            <div className="flex w-1/2 gap-10 justify-center  ">
+            <div className="flex full gap-10 justify-center mt-10  ">
               <button
                 onClick={handleNewBill}
-                className="bg-white w-1/2 text-black px-4 py-2 rounded-md shadow text-sm"
+                className="bg-white font-semibold text-black px-4 py-2 rounded-md shadow text-sm"
               >
                 Create New Bill
               </button>
 
               <button
                 onClick={() => setIsBillModalOpen(true)}
-                className="bg-white w-1/2 text-black px-4 py-2 rounded-md shadow"
+                className="bg-lime-300 font-semibold  text-black px-4 py-2 rounded-md shadow text-sm"
               >
                 Preview Bill
               </button>
             </div>
 
-            {/* delete bill option if anything goes wrong */}
-            <button className="bg-red-500 text-black px-4 py-2 rounded-md shadow">
-              Delete Bill
-            </button>
+           
           </div>
         </div>
       )}

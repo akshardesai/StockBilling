@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { addHeight, readAllProduct } from "../../utils/StockTables";
 
-const Cart = ({ data, setData, additionalInfo=null}) => {
+const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
   const [products, setProducts] = useState([]);
   const [selectedSize, setSelectedSize] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

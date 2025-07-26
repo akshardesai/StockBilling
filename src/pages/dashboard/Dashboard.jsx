@@ -6,6 +6,7 @@ import { createBill } from "../../utils/InvoicingTables";
 import PrintBill from "../../components/dashboard/PrintBill";
 
 import LoadingNotification from "../../components/LoadingNotification";
+import Alert from "../../components/Alert";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -13,6 +14,12 @@ const Dashboard = () => {
   const [billDocument,setBillDocument]=useState(null)
   
   const [isLoading,setIsLoading]=useState(false)
+  
+  const [validationArray,setValidationArray]=useState([])
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("error");
  
 
   const tabs = [
@@ -46,6 +53,7 @@ const Dashboard = () => {
   function handleSubmitBtn() {
     //db success remove submit option
     //db success then open // allow  print option / modal
+     setActiveTab(2);
    setIsLoading(true)
 
    
@@ -63,15 +71,20 @@ const Dashboard = () => {
       
       //show print modal with id,time date every important small detail
       setIsLoading(false)
-      setActiveTab(2);
+      setValidationArray(response.validation)
+     
     } else {
       console.log("Failed to create bill", response.error);
       setIsLoading(false)
-      setActiveTab(2)
+      setValidationArray(response.validation)
+       setShowAlert(true);
+      setAlertMessage(response.error);
+      
     }
   }
 
   const ActiveComponent = tabs[activeTab].Component;
+
 
   return (
     <>
@@ -91,16 +104,33 @@ const Dashboard = () => {
               </span>
             </h1>
           </div>
+
+          <div className="tabUI-container w-full  h-2 flex px-4  gap-4">
+            <div className={`tab-1 ${activeTab===0?"bg-lime-300":"bg-[#171717]"} w-full h-full rounded-lg  transition-colors duration-700`}></div>
+            <div className={`tab-2   ${activeTab===1?"bg-lime-300":"bg-[#171717]"} w-full h-full rounded-lg transition-colors duration-700`}></div>
+            <div className={`tab-3   ${activeTab===2?"bg-lime-300":"bg-[#171717]"} w-full h-full rounded-lg transition-colors duration-700`}></div>
+          </div>
         </div>
         {/* Header Section End */}
-        <ActiveComponent data={data} setData={setData} additionalInfo={billDocument } setActiveTab = {setActiveTab} />
 
-        <div className="btn-container w-full flex justify-center mt-4 ">
+        {isLoading?
+    (    <div className="min-h-screen bg-[#0B0B0B] flex items-center justify-center ">
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-[#BEF264] rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-[#BEF264] rounded-full animate-pulse delay-100"></div>
+          <div className="w-2 h-2 bg-[#BEF264] rounded-full animate-pulse delay-200"></div>
+        </div>
+      </div>)
+:(<>
+
+        <ActiveComponent data={data} setData={setData} additionalInfo={billDocument} setActiveTab = {setActiveTab} validationArray={validationArray} />
+
+        <div className="btn-container w-full flex justify-around mt-7 ">
           {activeTab < 1 && data.cartData.length > 0 &&(
             <button
               disabled={data.cartData.length === 0}
               onClick={handleNextBtn}
-              className="p-4 text-black bg-white  cursor-pointer"
+              className="px-4 py-2 text-black bg-white  cursor-pointer font-semibold rounded-md"
             >
               Next
             </button>
@@ -108,7 +138,7 @@ const Dashboard = () => {
           {activeTab > 0 && activeTab<=1 && (
             <button
               onClick={handlePreviousBtn}
-              className="p-4 text-black bg-white cursor-pointer"
+              className="p-2 text-black bg-white font-semibold  cursor-pointer rounded-md"
             >
               Previous
             </button>
@@ -116,21 +146,30 @@ const Dashboard = () => {
           {activeTab === 1 && data.name.length>0 && (
             <button
               onClick={handleSubmitBtn}
-              className="p-4 text-black bg-white cursor-pointer"
+              className="px-4 p-2 text-black bg-white cursor-pointer font-semibold rounded-md"
             >
               Submit
             </button>
           )}
         </div>
 
+</>)
+}
+
+
+
 
       </div>
 
 
- <LoadingNotification
-      showLoading={isLoading}
+
+        <Alert
+        showAlert={showAlert}
+        alertType={alertType}
+        alertMessage={alertMessage}
+        onClose={() => setShowAlert(false)}
       />
-   
+
 
   
     </>

@@ -15,12 +15,16 @@ import Alert from "../../components/Alert";
 
 const Bill = () => {
   const currentDate = new Date();
-  const [isDateModal, setIsDateModal] = useState(false);
   const [exploreBillModal, setExploreBillModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+
+  //SELECT DATE calendar modal
+  const [isDateModal, setIsDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
+
+
   const [detailedBill, setDetailedBill] = useState(null);
   const [bills, setBills] = useState(null);
 
@@ -160,11 +164,11 @@ const Bill = () => {
   return (
     <>
       <div>
-        <section className="home">
+        <section className="home bg-[#0B0B0B] ">
           <div className="home__container w-full min-h-screen px-2 sm:px-4">
-            <div className="home__heading pt-7 w-full flex flex-col justify-center items-center">
+            <div className="home__heading pt-7 w-full flex flex-col justify-center items-center mb-10">
               <h1 className="text-center text-2xl sm:text-4xl font-bold font-protestFont font-strike">
-                B<span className="text-[#D7FF9C]">i</span>lls.
+                All Bi<span className="text-[#D7FF9C]">ll</span>s.
               </h1>
               <div className="flex gap-10">
                 <button
@@ -175,9 +179,12 @@ const Bill = () => {
                 </button>
               </div>
             </div>
-
-            <div className="px-2 sm:px-6  mt-16">
-              <div className="bg-[#171717]  px-3 sm:p-6 ">
+            <div className="select-date-info-container px-7 flex justify-between">
+              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl" >{currentMonth?monthNames[currentMonth]:"N/A"}</p>
+              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{currentDate?currentDate.toLocaleDateString():"N/A"}</p>
+            </div>
+            <div className="bg-[#171717] rounded-lg   ">
+              <div className=" px-6 py-6  sm:p-6 ">
                 {/* <div className="flex  justify-between items-center  mb-4 ">
                   <h2 className="text-lg sm:text-xl font-semibold text-neutral-200 ">
                     Month - {monthNames[currentMonth]}
@@ -190,24 +197,24 @@ const Bill = () => {
                   </p>
                 </div> */}
 
-                <div className="overflow-x-auto -mx-3 sm:mx-0   ">
+                <div className="overflow-x-auto -mx-3 sm:mx-0 border-2 rounded-lg border-zinc-800 bg-zinc-950/50   ">
                   <table className="w-full  ">
                     <thead className="">
                       <tr className=" ">
-                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-2 border-white text-lime-300 font-bold  text-[12px] sm:text-sm  ">
+                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm  ">
                           Sr
                         </th>
-                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-2 border-white text-lime-300 font-bold  text-[12px] sm:text-sm">
+                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm">
                           Customer Info
                         </th>
-                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-2 border-white text-lime-300 font-bold  text-[12px] sm:text-sm hidden sm:table-cell">
+                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm hidden sm:table-cell">
                           Date
                         </th>
-                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-2 border-white text-lime-300 font-bold  text-[12px] sm:text-sm ">
+                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm ">
                           Phone Number
                         </th>
 
-                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-2 border-white text-lime-300 font-bold  text-[12px] sm:text-sm">
+                        <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm">
                           Action
                         </th>
                       </tr>

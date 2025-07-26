@@ -10,35 +10,50 @@ import {
 } from "./appWrite";
 
 async function checkItemsInStock(billinfo) {
-  let doesNotExist = 0;
 
-  const cart = billinfo.cartData;
-
-  console.log("cart data inside checkstock funciton ->", cart);
-
-  for (const size of cart) {
-    for (const height of size.heights) {
-  
-
-      const existing = await db.getDocument(DATABASE_ID,HEIGHTS_COLLECTION_ID,height.$id,)
-
-      if (existing.quantity<height.cartQuantity) {
+  try {
+    
+    let doesNotExist = 0;
+    
+    const cart = billinfo.cartData;
+    
+    console.log("cart data inside checkstock funciton ->", cart);
+    
+    for (const size of cart) {
+      for (const height of size.heights) {
         
-          throw new Error(`Insufficient stock for height - ${height.height} id - ${height.$id}`)
+        
+        const existing = await db.getDocument(DATABASE_ID,HEIGHTS_COLLECTION_ID,height.$id)
+        
+        if (existing.quantity<height.cartQuantity) {
           
+          return {success:false}
+          
+        }
+        
       }
-
+      
     }
+    return {success:true}
+    
+  } 
+  catch (error) {
+    return {success:false}
   }
 }
 
 export async function createBill(billInfo) {
   //first find size and height exists if yes deduct the stock validate that it is not less than 1 and then proceed with creating bill
+  let validationArray = []
   try {
     const inStock = await checkItemsInStock(billInfo);
 
+    if (inStock.success) {
 
     
+
+
+    validationArray.push(1)
     // log('instock variable value ->',inStock);
 
     const billId = ID.unique();
@@ -57,13 +72,13 @@ export async function createBill(billInfo) {
       );
 
       if (!billResponse) {
-        //throw error
-        return {
-          success: false,
-          error: "Failed To Create Bill No Response Error",
-        };
+        
+
+        return {success:false,error:'Failed to create bill server error',validation:validationArray}
+      
       }
 
+      validationArray.push(2)
 
      for(const i of billInfo.cartData){
       
@@ -91,22 +106,25 @@ export async function createBill(billInfo) {
 
           if (!response) {
             //have to delete the bill
-              console.log("response error creating cart");
-              throw new Error('Failed to Insert a item in Cart')
+            
+              return {success:false,error:'Failed to add items in bill "DELETE BILL" ',validation:validationArray}
 
           }
 
 
         }catch(error){
+
+          
          
-        throw new Error(`catched error ${error}`);
+                    return {success:false,error:'Failed to add items in bill "DELETE BILL" ',validation:validationArray}
+
         
 
         }
       }
 
     }
-
+    validationArray.push(3)
     //cart also created now update stock
 
     try {
@@ -122,20 +140,27 @@ export async function createBill(billInfo) {
             })
 
             if (!responseUpdateStock) {
-               throw new Error(`catched error ${error}`);
+               
+              return {success:false,error:'Failed to update stock',validation:validationArray}
             }
 
           }
       }
     } catch (error) {
-       throw new Error(`catched error ${error}`);
+      
+                     return {success:false,error:'Failed to update stock',validation:validationArray}
+
     }
 
+    validationArray.push(4)
+     return {success:true,data:billResponse,validation:validationArray}
 
-     return {success:true,data:billResponse}
+     }else{
+      return {success:false,error:'insufficient stock',validation:validationArray}
+     }
   } catch (error) {
-    throw new Error(`catched error ${error}`);
-    return { success: false, error: `Catched An Error ${error}` };
+  
+    return { success: false, error: `Catched An Error ${error}`,validation:validationArray };
   }
 }
 
