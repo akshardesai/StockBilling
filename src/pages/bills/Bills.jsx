@@ -15,12 +15,13 @@ import Alert from "../../components/Alert";
 
 const Bill = () => {
   const currentDate = new Date();
+  const defaultSelectedDate = currentDate.toISOString().split("T")[0]
   const [exploreBillModal, setExploreBillModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
 
   //SELECT DATE calendar modal
   const [isDateModal, setIsDateModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(defaultSelectedDate);
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
 
@@ -84,7 +85,7 @@ const Bill = () => {
   async function deleteBill(bill) {
     console.log(bill);
     setIsLoading(true)
-    const response = await deleteBillDocument(bill.$id);
+    const response = await deleteBillDocument(bill);
 
     if (response.success) {
       console.log("deleted");
@@ -93,6 +94,8 @@ const Bill = () => {
       setShowSuccessNotification(true);
       setAlertMessage("Bill Deleted");
       setIsLoading(false)
+
+
     } else {
       setDeleteModal(false)
       console.log("failed to delete", response.error);
@@ -132,16 +135,19 @@ const Bill = () => {
   useEffect(() => {
     fetchAllBillsDB(currentMonth, currentYear);
   }, []);
+
   useEffect(() => {
-    fetchAllBillsDB(currentMonth, currentYear);
+    if (selectedDate === null) {
+      
+      fetchAllBillsDB(currentMonth, currentYear);
+    }
   }, [currentMonth, currentYear]);
 
   useEffect(() => {
     if (selectedDate) {
       fetchBillsForDate(selectedDate);
-    } else {
-      fetchAllBillsDB(currentMonth, currentYear);
-    }
+    } 
+    
   }, [selectedDate]);
 
   let total = 0;
@@ -167,7 +173,7 @@ const Bill = () => {
         <section className="home bg-[#0B0B0B] ">
           <div className="home__container w-full min-h-screen px-2 sm:px-4">
             <div className="home__heading pt-7 w-full flex flex-col justify-center items-center mb-10">
-              <h1 className="text-center text-2xl sm:text-4xl font-bold font-protestFont font-strike">
+              <h1 className="text-center text-2xl sm:text-4xl font-bold font-protestFont font-strike underline">
                 All Bi<span className="text-[#D7FF9C]">ll</span>s.
               </h1>
               <div className="flex gap-10">
@@ -179,11 +185,11 @@ const Bill = () => {
                 </button>
               </div>
             </div>
-            <div className="select-date-info-container px-7 flex justify-between">
+            <div className="select-date-info-container px-7 flex justify-between md:w-[70%] md:mx-auto">
               <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl" >{currentMonth?monthNames[currentMonth]:"N/A"}</p>
-              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{currentDate?currentDate.toLocaleDateString():"N/A"}</p>
+              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{selectedDate?selectedDate.split("-")[2]+" - "+ selectedDate.split("-")[0]:"N/A"}</p>
             </div>
-            <div className="bg-[#171717] rounded-lg   ">
+            <div className="bg-[#171717] rounded-lg  md:w-[70%] md:mx-auto ">
               <div className=" px-6 py-6  sm:p-6 ">
                 {/* <div className="flex  justify-between items-center  mb-4 ">
                   <h2 className="text-lg sm:text-xl font-semibold text-neutral-200 ">
@@ -458,7 +464,7 @@ const Bill = () => {
                 ></Calendar>
 
                 <button
-                  className="text-black font-bold hover:text-white absolute -bottom-4 left-1/2 transform -translate-x-1/2  bg-red-400 px-3 py-2 rounded-full "
+                  className="text-black text-sm font-bold hover:text-white absolute -top-1 -right-1   bg-red-400 px-2 py-1 rounded-full "
                   onClick={() => setIsDateModal(false)}
                 >
                   ✕

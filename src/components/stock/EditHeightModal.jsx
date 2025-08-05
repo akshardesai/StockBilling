@@ -4,9 +4,9 @@ import LoadingNotification from "../LoadingNotification";
 
 
 const EditHeightModal = ({
-  id,
-  sizeId,
-  height,
+  heightObject,
+  sizeObject,
+  heightName,
   quantity,
   handleEditHeightModal,
   setProducts,
@@ -17,7 +17,7 @@ const EditHeightModal = ({
 
 
 }) => {
-  const [updatedHeight, setUpdatedHeight] = useState(height||"");
+  const [updatedHeight, setUpdatedHeight] = useState(heightName||"");
   const [updatedQuantity, setUpdatedQuantity] = useState(quantity||0);
   const [isLoading,setIsLoading]=useState(false)
 
@@ -29,26 +29,26 @@ const EditHeightModal = ({
       return;
     }
 
-    if (updatedHeight==height && updatedQuantity==quantity) {
+    if (updatedHeight==heightName && updatedQuantity==quantity) {
       // show error same value no changes
       // close modal
         return;
     } 
-    updateHeightDB(id, updatedHeight,updatedQuantity);
+    updateHeightDB(heightObject, updatedHeight,updatedQuantity);
   }
 
-  async function updateHeightDB(id, h=height,q=quantity) {
+  async function updateHeightDB(heightObject, h=height,q=quantity) {
     setIsLoading(true)
-    const response = await updateHeight(id,h,q);
+    const response = await updateHeight(heightObject,h,q);
 
     if (response.success) {
       setProducts((prevProducts) =>
         prevProducts.map((product) => {
-          if (product.$id === sizeId) {
+          if (product.$id === sizeObject.$id) {
             return {
               ...product,
               heights: product.heights
-                ? product.heights.map((h) => h.$id === id ? {...h,height:response.data.height,quantity:response.data.quantity}:h)
+                ? product.heights.map((h) => h.$id === heightObject.$id ? {...h,height:response.data.height,quantity:response.data.quantity}:h)
                 : [],
             };
           }
@@ -105,7 +105,7 @@ const EditHeightModal = ({
              Height 
 
             <span className="ms-2 text-xs text-gray-600 font-mono font-medium">
-              Current Value = {height}
+              Current Value = {heightName}
             </span>
 
             </label>
@@ -115,7 +115,7 @@ const EditHeightModal = ({
               value={updatedHeight}
               onChange={(e) => setUpdatedHeight(e.target.value)}
               className="bg-[#1F1F1F] w-full text-white placeholder-gray-400 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#D7FF9C]"
-              placeholder={height} required
+              placeholder={heightName} required
            
             />
 

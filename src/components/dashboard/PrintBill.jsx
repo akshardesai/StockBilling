@@ -60,8 +60,8 @@ const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab,validati
   return (
     <>
       {!isBillModalOpen && (
-        <div className="w-full  h-fit flex justify-center mt-[30%]">
-          <div className="flex flex-col items-center w-full gap-4">
+        <div className="w-full  h-fit flex justify-center mt-[30%] sm:mt-[10%]">
+          <div className="flex flex-col items-center w-full sm:w-[50%] gap-4">
 
             <div className="history-entry w-[60%] flex justify-between  bg-[#171717] border-2 border-gray-600 p-2 rounded-lg    ">
               <p className="text-md font-medium ">

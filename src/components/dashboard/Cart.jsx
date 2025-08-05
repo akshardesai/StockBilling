@@ -241,8 +241,12 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
     readAllProductsDB();
   }, []);
 
+
   useEffect(() => {
-    setSelectedSize(products[0]);
+    if (products) {
+      
+      setSelectedSize(products[0]);
+    }
   }, [products]);
 
   // Extract unique sizes from products (mock implementation)
@@ -265,20 +269,20 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
   return (
     <>
       <div className="h-fit bg-[#0B0B0B] text-white ">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8  sm:py-6 lg:py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8   ">
           {/* Size Filter Section */}
-          <div className="max-w-4xl mx-auto mb-4 sm:mb-6 lg:mb-8">
+          <div className="max-w-4xl mx-auto mb-4 ">
             <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
-                    {products.length} sizes available
+                    {products?products.length : "N|A"} sizes available
                   </span>
                 </div>
               </div>
 
               <div className="flex h-fit py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
-                {products.map((s) => (
+                {products?products.map((s) => (
                   <button
                     key={s.$id}
                     onClick={() =>
@@ -299,15 +303,16 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
                     {/* Hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-[#BEF264]/0 to-[#BEF264]/0 group-hover:from-[#BEF264]/5 group-hover:to-[#BEF264]/10 transition-all duration-300 rounded-lg sm:rounded-xl" />
                   </button>
-                ))}
+                )):""}
               </div>
             </div>
           </div>
         </div>
 
+                <div className="sm:flex sm:w-[70%] sm:mx-auto">
         {/*<!--============== Selected Size Height Table ==============-->*/}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 sm:py-6 lg:py-8">
-          <div className="max-w-4xl mx-auto mb-4 sm:mb-6 lg:mb-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:w-[80%] ">
+          <div className="max-w-4xl mx-auto mb-4 ">
             <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
@@ -318,7 +323,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
               </div>
 
               {/*<!--==============  Height Table ==============-->*/}
-              <div className="flex h-fit py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
+              <div className="flex h-fit sm:min-h-[255px] py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
                 {selectedSize ? (
                   <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950/50">
                     <div className="relative w-full overflow-auto">
@@ -393,7 +398,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
         </div>
 
         {/*<!--============== Cart Container ==============-->*/}
-        <div className="container mx-auto px-4  sm:px-6 lg:px-8 sm:py-6 lg:py-8">
+        <div className="container mx-auto px-4 md:w-[70%] ">
           <div className="max-w-4xl mx-auto">
             <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
@@ -483,13 +488,15 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
             </div>
           </div>
         </div>
+
+        </div>
       </div>
 
 
       {/*<!--============== Price Input MOdal ==============-->*/}
 
       <div
-        className={`fixed   w-full h-fit p-4 top-0 bg-white text-black rounded-b-4xl transform transition-all duration-500 ease-in-out ${
+        className={`fixed    w-[90%] md:w-[25%] h-fit p-4 top-0 left-1/2  bg-white text-black rounded-b-4xl transform -translate-x-1/2 transition-all duration-500 ease-in-out ${
           ispriceModal ? "translate-y-0" : "-translate-y-160"
         }`}
       >
@@ -528,7 +535,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
 
       {/*<!--============== Edit Price Input Modal ==============-->*/}
       <div
-        className={`fixed   w-full h-fit p-4 top-0 bg-lime-300 text-black rounded-b-4xl transform transition-all duration-500 ease-in-out ${
+        className={`fixed   w-[90%] md:w-[25%] h-fit  p-4 top-0 left-1/2 bg-[#bef264] text-black rounded-b-4xl transform -translate-x-1/2 transition-all duration-500 ease-in-out ${
           isEditPriceModal ? "translate-y-0" : "-translate-y-160"
         }`}
       >

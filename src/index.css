@@ -1,1 +1,9 @@
 @import "tailwindcss";
+:root {
+  --red800: #efefef; /* This is the Tailwind color for red-800 */
+  --lime400: #a3e635; /* Tailwind lime-400 */
+}
+
+.border-red800{
+    border:2px solid var(--color-red-800)
+}

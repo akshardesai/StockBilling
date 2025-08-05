@@ -2,7 +2,7 @@ import Cart from "../../components/dashboard/Cart";
 import CustomerDetail from "../../components/dashboard/CustomerDetail";
 import { useState } from "react";
 // import PreviewBillModal from "../../components/dashboard/PreviewBillModal";
-import { createBill } from "../../utils/InvoicingTables";
+import { createBill, recordBillHistory } from "../../utils/InvoicingTables";
 import PrintBill from "../../components/dashboard/PrintBill";
 
 import LoadingNotification from "../../components/LoadingNotification";
@@ -65,13 +65,19 @@ const Dashboard = () => {
    
     const response = await createBill(data);
     if (response.success) {
-      console.log("bill created show print");
+      console.log("bill created show print",response.data);
 
       setBillDocument(response.data)
       
       //show print modal with id,time date every important small detail
       setIsLoading(false)
       setValidationArray(response.validation)
+
+      if (response.validation.length>=2) {
+       
+         const createHistory = await recordBillHistory(response.data,response.cartData)
+        
+      } 
      
     } else {
       console.log("Failed to create bill", response.error);
@@ -88,9 +94,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="min-h-screen w-full flex flex-col ">
+      <div className="min-h-screen w-full  md:mx-auto flex flex-col ">
         {/* Header Section */}
-        <div className="text-center mb-4 sm:mb-4 lg:mb-7 mt-7">
+        <div className="text-center mb-4 sm:mb-4 lg:mb-7 mt-7 sm:w-[70%] mx-auto">
           <div className="inline-flex items-center justify-center mb-2 sm:mb-3 lg:mb-4">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-mono tracking-tight">
               <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
@@ -125,7 +131,7 @@ const Dashboard = () => {
 
         <ActiveComponent data={data} setData={setData} additionalInfo={billDocument} setActiveTab = {setActiveTab} validationArray={validationArray} />
 
-        <div className="btn-container w-full flex justify-around mt-7 ">
+        <div className="btn-container w-full flex justify-around mt-7 sm:w-[30%] sm:mx-auto ">
           {activeTab < 1 && data.cartData.length > 0 &&(
             <button
               disabled={data.cartData.length === 0}

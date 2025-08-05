@@ -4,6 +4,7 @@ import {
   DATABASE_ID,
   db,
   HEIGHTS_COLLECTION_ID,
+  HISTORY_COLLECTION_ID,
   ID,
   SIZES_COLLECTION_ID,
 } from "./appWrite";
@@ -28,6 +29,26 @@ export async function addProduct(product) {
       };
     }
 
+    // console.log('response  add size ->',response);
+    
+
+    const historyData = {
+      description: `Size created of name - ${product} , At - ${response.$createdAt}`,
+      type: "stockPage",
+      action: "create",
+    };
+
+    const historyResponse = await db.createDocument(
+      DATABASE_ID,
+      HISTORY_COLLECTION_ID,
+      ID.unique(),
+      historyData
+    );
+
+    if (!historyResponse) {
+      alert("Failed to record history of Creating Size");
+    }
+
     return { success: true, data: response };
   } catch (error) {
     return {
@@ -37,17 +58,39 @@ export async function addProduct(product) {
   }
 }
 
-export async function deleteSize(id) {
+export async function deleteSize(size) {
   try {
-    
+    const deletedAt = new Date()
+    console.log("size to be deleted -> ", size);
+
     const response = await db.deleteDocument(
       DATABASE_ID,
       SIZES_COLLECTION_ID,
-      id
+      size.$id
     );
 
     if (!response) {
       return { success: false, error: "Failed To Delete Size" };
+    }
+
+    const historyData = {
+      description: `Size deleted of name - ${size.size} , heights - ${
+        size.heights.map((height) => height.height + "|" + height.quantity) ||
+        "N|A"
+      } , Size Deleted At - ${deletedAt.toISOString()}`  ,
+      type: "stockPage",
+      action: "delete",
+    };
+
+    const historyResponse = await db.createDocument(
+      DATABASE_ID,
+      HISTORY_COLLECTION_ID,
+      ID.unique(),
+      historyData
+    );
+
+    if (!historyResponse) {
+      alert("Failed to record history of Creating Size");
     }
 
     return { success: true };
@@ -56,18 +99,34 @@ export async function deleteSize(id) {
   }
 }
 
-export async function deleteHeight(id) {
+export async function deleteHeight(height,size) {
   try {
+    const deletedAt = new Date ()
     const response = await db.deleteDocument(
       DATABASE_ID,
       HEIGHTS_COLLECTION_ID,
-      id
+      height.$id
     );
     if (!response) {
       return {
         success: false,
         error: "Failed to delete height",
       };
+    }
+
+    const historyData={
+
+       description: `Height deleted of name - ${height.height} , of Size - ${size.size} , with Quantity - ${height.quantity} , At - ${deletedAt.toISOString()} `,
+      type: "stockPage",
+      action: "delete",
+
+    }
+
+    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
+
+
+    if (!historyResponse) {
+        alert('Failed to record the history of deleting height')
     }
 
     return { success: true, data: response };
@@ -78,13 +137,13 @@ export async function deleteHeight(id) {
 
 export async function readAllProduct() {
   // console.log('inside readall product function');
-  
+
   try {
     const response = await db.listDocuments(DATABASE_ID, SIZES_COLLECTION_ID);
 
     if (!response) {
-      console.log('if condition no response');
-      
+      console.log("if condition no response");
+
       return {
         success: false,
         error: "Unable to fetch Sizes from Server",
@@ -93,11 +152,10 @@ export async function readAllProduct() {
 
     // c("returned response", response);
     // console.log('response of readall product',response);
-    
+
     return response;
   } catch (error) {
     // console.log('direct inside catch maybe db error');
-    
 
     return {
       success: false,
@@ -107,15 +165,15 @@ export async function readAllProduct() {
   }
 }
 
-export async function addHeight(product_id, height, qty) {
+export async function addHeight(size, height, qty) {
   try {
     // c(product_id, height, qty);
 
     const data = {
       height: height,
       quantity: parseInt(qty),
-      sizes: product_id,
-      size_id: product_id,
+      sizes: size.$id,
+      size_id: size.$id,
     };
 
     const response = await db.createDocument(
@@ -132,6 +190,23 @@ export async function addHeight(product_id, height, qty) {
       };
     }
 
+      const historyData = {
+      description: `Height created of name - ${height} , Quantity - ${qty} , In Size - ${size.size} , At - ${response.$createdAt} ,  sizeId - ${size.$id} , size Created At - ${size.$createdAt}`,
+      type: "stockPage",
+      action: "create",
+    };
+
+    const historyResponse = await db.createDocument(
+      DATABASE_ID,
+      HISTORY_COLLECTION_ID,
+      ID.unique(),
+      historyData
+    );
+
+    if (!historyResponse) {
+      alert("Failed to record history of Creating Size");
+    }
+
     return { success: true, data: response };
   } catch (error) {
     return {
@@ -141,7 +216,8 @@ export async function addHeight(product_id, height, qty) {
   }
 }
 
-export async function updateHeight(id, updatedHeight, updatedQuantity) {
+export async function updateHeight(heightObject, updatedHeight, updatedQuantity) {
+
   const row = {
     height: updatedHeight,
     quantity: parseInt(updatedQuantity),
@@ -151,13 +227,27 @@ export async function updateHeight(id, updatedHeight, updatedQuantity) {
     const response = await db.updateDocument(
       DATABASE_ID,
       HEIGHTS_COLLECTION_ID,
-      id,
+      heightObject.$id,
       row
     );
 
     if (!response) {
       console.log("server error");
       return { success: false, error: "Server Error Failed To Update Height" };
+    }
+
+
+    const historyData = {
+      description:`Updated Height Name -  ${heightObject.height} to ${updatedHeight} , Quantity - ${heightObject.quantity} to ${updatedQuantity} , At - ${response.$updatedAt}`,
+      type:'stockPage',
+      action:'edit'
+
+    }
+
+    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
+
+    if (!historyResponse) {
+      alert('Failed to record the history of updating height')
     }
 
     return { success: true, data: response };
@@ -168,45 +258,79 @@ export async function updateHeight(id, updatedHeight, updatedQuantity) {
   }
 }
 
+export async function lessQuantityBy1(height, size) {
 
-export async function lessQuantityBy1(id,quantity){
-      try {
+  console.log('reduce height ->',height);
+  
+  try {
+    const row = {
+      quantity: parseInt(height.quantity - 1),
+    };
+    const response = await db.updateDocument(
+      DATABASE_ID,
+      HEIGHTS_COLLECTION_ID,
+      height.$id,
+      row
+    );
 
-        const row={
-            quantity:parseInt(quantity-1)
-        }
-        const response = await db.updateDocument(DATABASE_ID,HEIGHTS_COLLECTION_ID,id,row)
+    if (!response) {
+      return {
+        success: false,
+        error: "Server Error - Failed To Update Quantity",
+      };
+    }
 
-        if (!response) {
-            return {success:false,error:"Server Error - Failed To Update Quantity"}
-        }
+    const historyData = {
+      description:`reduced the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity-1} , At - ${response.$updatedAt} `,
+      type:'stockPage',
+      action:'edit'
+    }
 
-        return {success:true , data:response}
+    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
 
+    if (!historyResponse) {
+        alert('Failed to record the history of reducing stock by 1')
+    }
 
-      } catch (error) {
-          return {success:false,error:`Catched An Error - ${error}` }
-      }
+    return { success: true, data: response };
+  } catch (error) {
+    return { success: false, error: `Catched An Error - ${error}` };
+  }
 }
 
-export async function addQuantityBy1(id,quantity){
+export async function addQuantityBy1(height,size) {
+  try {
+    const row = {
+      quantity: parseInt(height.quantity + 1),
+    };
+    const response = await db.updateDocument(
+      DATABASE_ID,
+      HEIGHTS_COLLECTION_ID,
+      height.$id,
+      row
+    );
 
-      try {
+    if (!response) {
+      return {
+        success: false,
+        error: "Server Error - Failed To Update Quantity",
+      };
+    }
 
-        const row={
-            quantity:parseInt(quantity+1)
-        }
-        const response = await db.updateDocument(DATABASE_ID,HEIGHTS_COLLECTION_ID,id,row)
+       const historyData = {
+      description:`Increased the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity+1} , At - ${response.$updatedAt} `,
+      type:'stockPage',
+      action:'Edit'
+    }
 
-        if (!response) {
-            return {success:false,error:"Server Error - Failed To Update Quantity"}
-        }
+    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
 
-        return {success:true , data:response}
+    if (!historyResponse) {
+        alert('Failed to record the history of reducing stock by 1')
+    }
 
-
-      } catch (error) {
-          return {success:false,error:`Catched An Error - ${error}` }
-      }
-
+    return { success: true, data: response };
+  } catch (error) {
+    return { success: false, error: `Catched An Error - ${error}` };
+  }
 }

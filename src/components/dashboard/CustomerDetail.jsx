@@ -36,11 +36,11 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
     <div className=" px-4">
 
       {/*<!--============== Customer Info Container ==============-->*/}
-      <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4">
+      <div className="bg-[#171717] sm:w-[30%] mx-auto backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-4">
       
       <div className="form-container">
         <form  className=''>
-          <div className="flex flex-col   px-4 mb-4">
+          <div className="flex flex-col   px-4 mb-4 ">
 
           <label htmlFor="name" className='mb-1 ps-1 font-semibold'>Name</label>
           <input  type="text" placeholder="John" value={name?name:""} onChange={(e)=>handleInputUpdate(e)} name='name' className='w-ful px-2 bg-black  rounded-lg py-2 text-white border-2 border-gray-400/40 focus:border-lime-300/60  focus:outline-none  '/>
@@ -61,7 +61,7 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
       </div>
 
         {/*<!--============== Cart Container ==============-->*/}
-           <div className="container mx-auto   sm:px-6 lg:px-8 sm:py-6 lg:py-8">
+           <div className="container mx-auto   ">
              <div className="max-w-4xl mx-auto">
                <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
                  <div className="flex items-center justify-between mb-2 sm:mb-3">

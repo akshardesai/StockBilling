@@ -16,7 +16,7 @@ export default function Calendar({
   const eachButtonDate = (date) => {
     console.log("date selected -> ", date);
 
-    setSelectedDate(new Date(date + "T00:00:00"));
+    setSelectedDate(date);
   };
 
 
@@ -47,10 +47,18 @@ export default function Calendar({
       setCurrentMonth(currentMonth - 1);
     }
   };
+  const nextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
 
   const resetDate = () => {
     setSelectedDate(null);
-    setCurrentMonth(new Date().getMonth())
+    setCurrentMonth(currentMonth)
   };
 
   const getDateInString = (day) => {
@@ -62,14 +70,17 @@ export default function Calendar({
   };
 
   const getSelectedStatus = (day) => {
-    const dateString = `${String(currentMonth + 1)}/${String(day).padStart(
+    const dateString = `${currentYear}-${String(currentMonth + 1).padStart(
       2,
       "0"
-    )}/${currentYear}`;
+    )}-${String(day).padStart(2, "0")}`;
+    
 
     if (selectedDate) {
-      const selectedDateString = selectedDate.toLocaleDateString();
+      const selectedDateString = selectedDate
 
+     
+      
       if (dateString === selectedDateString) {
         
         
@@ -154,7 +165,7 @@ export default function Calendar({
         {selectedDate ? (
           <div>
             <p className="text-center font-bold tracking-wider text-white text-xs">
-              Selected Date - {selectedDate.toLocaleDateString()}
+              Selected Date - {selectedDate}
             </p>
           </div>
         ) : (
@@ -188,7 +199,14 @@ export default function Calendar({
             onClick={resetDate}
             className="bg-black border border-neutral-700/30 rounded-xl px-5 py-2 text-neutral-300 hover:bg-neutral-700/30"
           >
-            Reset
+          No Date
+          </button>
+
+          <button
+            onClick={nextMonth}
+            className="bg-black border border-neutral-700/30 rounded-xl px-5 py-2 text-neutral-300 hover:bg-neutral-700/30"
+          >
+            Next
           </button>
         </div>
       </div>

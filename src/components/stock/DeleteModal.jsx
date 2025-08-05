@@ -6,8 +6,8 @@ LoadingNotification
 
 const DeleteModal = ({
   setIsOpenDeleteModal,
-  id,
-  size_id,
+  selectedThing,
+  size,
   setProducts,
   title,
   message,
@@ -19,28 +19,28 @@ const DeleteModal = ({
 
   const [isLoading,setIsLoading]=useState(false)
 
-  function handleConfirmDelete(id) {
+  function handleConfirmDelete(selectedThing) {
     // ("delete id",id);
 
     if (title === "Size") {
-      confirmedDeleteSize(id);
+      confirmedDeleteSize(selectedThing);
     } else if (title === "Height") {
-      console.log("deleting height", id);
+      console.log("deleting height", selectedThing);
 
-      confirmedDeleteHeight(id);
+      confirmedDeleteHeight(selectedThing,size);
     }
   }
 
-  async function confirmedDeleteSize(id) {
+  async function confirmedDeleteSize(selectedThing) {
       try {
         setIsLoading(true)
-      const response = await deleteSize(id);
+      const response = await deleteSize(selectedThing);
 
       if (response.success) {
        
 
         setProducts((prevProducts) =>
-          prevProducts.filter((product) => product.$id !== id)
+          prevProducts.filter((product) => product.$id !== selectedThing.$id)
         );
 
        
@@ -67,10 +67,10 @@ const DeleteModal = ({
     }
   }
 
-  async function confirmedDeleteHeight(id) {
+  async function confirmedDeleteHeight(selectedThing,size) {
     try {
       setIsLoading(true)
-      const response = await deleteHeight(id);
+      const response = await deleteHeight(selectedThing,size);
 
       if (response.success) {
         console.log("height deleted");
@@ -78,12 +78,12 @@ const DeleteModal = ({
         setProducts((prevProducts) =>
           prevProducts.map((product) => {
             // Find the product that matches the ID
-            if (product.$id === size_id) {
+            if (product.$id === size.$id) {
               return {
                 ...product,
                 // Remove the height with the matching ID/value
                 heights: product.heights
-                  ? product.heights.filter((height) => height.$id !== id)
+                  ? product.heights.filter((height) => height.$id !== selectedThing.$id)
                   : [],
               };
             }
@@ -131,7 +131,7 @@ const DeleteModal = ({
           {/* <!-- Buttons --> */}
           <div className="flex gap-4 mt-6">
             <button
-              onClick={() => handleConfirmDelete(id)}
+              onClick={() => handleConfirmDelete(selectedThing)}
               id="confirmDelete"
               className="bg-red-500 text-white hover:bg-red-400 active:bg-red-600  px-4 py-2 rounded-md transition duration-300"
             >

@@ -88,7 +88,7 @@ const Stock = () => {
 
   return (
     <>
-      <section className="home">
+      <section className="home w-full ">
         <div className="home__container w-full min-h-screen z-50 bg-[#0B0B0B]">
           {/*<!--============== Add Product Modal ==============-->*/}
 
@@ -147,7 +147,7 @@ const Stock = () => {
 
           {/* <!--============== Stock Heading   ===============--> */}
           <div className="home__heading pt-7 w-full flex flex-col justify-center items-center">
-            <h1 className="text-center text-4xl font-bold font-mono font-strike bg-black px-2 py-1 rounded-lg">
+            <h1 className="text-center text-4xl font-bold font-mono font-strike underline px-2 py-1 rounded-lg">
               Manage S<span className="text-[#BEF264]">toc</span>k.
             </h1>
 
@@ -156,16 +156,16 @@ const Stock = () => {
               <button
                 onClick={openProductModal}
                 id="addProductBtn"
-                className="text-center mt-7 p-3 rounded-4xl font-mono bg-[#BEF264] text-black"
+                className="text-center mt-7 p-3 rounded-md font-mono bg-white text-black"
               >
                 <i class="ri-function-add-fill me-2"></i>
-                Add Size
+                Create Size
               </button>
             </div>
           </div>
 
           {/*<!--==============  Products Listed Inside This Container ==============-->*/}
-          <div className="home__table-box mt-14 px-3   sm:px-24 sm:gap-x-10   ">
+          <div className="home__table-box  px-3   sm:px-24 sm:gap-x-10   ">
             <AllProducts
               products={products}
               setProducts={setProducts}
