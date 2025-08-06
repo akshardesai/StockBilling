@@ -91,3 +91,19 @@ export async function fetchMonthHistory(month, year) {
     };
   }
 }
+
+export  function formatTime(fullUtc){
+  const date = new Date(fullUtc);
+
+const local = date.toLocaleString("en-IN", {
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: true,
+});
+
+console.log('local>', local);
+
+
+return local
+}

@@ -355,7 +355,7 @@ const AllProducts = ({ products, setProducts }) => {
       )}
 
       {/* Filter Container */}
-      <div className={`filter-container ${searchContainer ? 'mt-24' : 'mt-4'} transition-all duration-300`}>
+      <div className={`filter-container mt-4 transition-all duration-300`}>
         <div className="w-full sm:w-[50%] mx-auto flex flex-col items-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl sm:max-w-xl mx-auto mb-4">

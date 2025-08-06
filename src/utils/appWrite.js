@@ -1,5 +1,5 @@
 // src/appwriteClient.js
-import { Client, Databases,Query,ID } from 'appwrite';
+import { Client, Databases,Query,ID, Account } from 'appwrite';
 
 // Create the Appwrite client
 const client = new Client();
@@ -18,5 +18,6 @@ export const BILLS_COLLECTION_ID = import.meta.env.VITE_BILLS_COLLECTION_ID;
 export const CART_COLLECTION_ID = import.meta.env.VITE_CART_COLLECTION_ID
 export const HISTORY_COLLECTION_ID = import.meta.env.VITE_HISTORY_COLLECTION_ID
 
+export const account = new Account(client)
 
 export {Query,ID};

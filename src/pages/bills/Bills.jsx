@@ -11,6 +11,7 @@ import Calendar from "../../components/bills/Calendar";
 import SuccessNotification from "../../components/SuccessNotification";
 import LoadingNotification from "../../components/LoadingNotification";
 import Alert from "../../components/Alert";
+import { formatTime } from "../../utils/historyTable";
 
 
 const Bill = () => {
@@ -126,11 +127,7 @@ const Bill = () => {
     window.print();
   };
 
-  // const handleDeleteBtnClick= ()=>{
 
-  //   setDetailedBill()
-
-  // }
 
   useEffect(() => {
     fetchAllBillsDB(currentMonth, currentYear);
@@ -141,7 +138,7 @@ const Bill = () => {
       
       fetchAllBillsDB(currentMonth, currentYear);
     }
-  }, [currentMonth, currentYear]);
+  }, [currentMonth, currentYear,selectedDate]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -187,7 +184,7 @@ const Bill = () => {
             </div>
             <div className="select-date-info-container px-7 flex justify-between md:w-[70%] md:mx-auto">
               <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl" >{currentMonth?monthNames[currentMonth]:"N/A"}</p>
-              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{selectedDate?selectedDate.split("-")[2]+" - "+ selectedDate.split("-")[0]:"N/A"}</p>
+              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{selectedDate?selectedDate.split("-")[2]+" - "+ selectedDate.split("-")[0]:currentYear?currentYear:"N|A"}</p>
             </div>
             <div className="bg-[#171717] rounded-lg  md:w-[70%] md:mx-auto ">
               <div className=" px-6 py-6  sm:p-6 ">
@@ -243,18 +240,18 @@ const Bill = () => {
 
                                 {/* Show email on mobile when date column is hidden */}
                                 <span className="text-xs text-neutral-400 block  mt-1 break-all">
-                                  {entry.$createdAt || "N/A"}
+                                  {entry.$createdAt.split("T")[0] || "N/A"}
                                 </span>
                                 {/* Show email on mobile when date column is hidden */}
                                 <span className="text-xs text-neutral-400 block  mt-1 break-all">
-                                  {entry.$createdAt || "N/A"}
+                                  {formatTime(entry.$createdAt) || "N/A"}
                                 </span>
                               </div>
                             </td>
                             <td className="py-3 sm:py-4 px-3 sm:px-4 text-white  text-sm sm:text-base text-wrap border-r border-neutral-500/30">
-                              <span className="inline-flex items-center  px-2.5 py-0.5 text-xs font-medium text-neutral-300">
-                                {entry.$createdAt.split("T")[0]}
-                              </span>
+                              <button className={`inline-flex items-center  px-2.5 py-0.5 text-xs font-medium text-neutral-200 ${entry.payment_status?entry.payment_status==1?"bg-lime-500/30  ":"bg-red-500/30":"bg-gray-700"} rounded-md `}>
+                                {entry.number}
+                              </button>
                             </td>
                             <td className="py-3 sm:py-4 px-3 sm:px-4 text-neutral-300 text-sm sm:text-base text-wrap border-r border-neutral-500/30 hidden sm:table-cell">
                               <span className="break-all">

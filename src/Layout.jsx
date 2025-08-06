@@ -1,16 +1,38 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Link, NavLink } from "react-router-dom";
-
 import "./index.css";
+import { account } from "./utils/appWrite";
 
 function Layout() {
   const [isOpen, setIsOpen] = useState(
     window.matchMedia("(min-width: 1024px)").matches
   );
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSlider = () => {
     setIsOpen((prev) => !prev);
+  };
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      
+      // Delete the current session
+      await account.deleteSession('current');
+      
+      console.log('✅ Logout successful');
+      
+      // Redirect to login page
+      navigate('/login');
+      
+    } catch (err) {
+      console.error('❌ Logout failed:', err.message);
+      alert("Logout failed: " + err.message);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -25,45 +47,59 @@ function Layout() {
           <ul className="slider__links w-full h-full flex flex-col justify-center items-center gap-16">
             <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
               <NavLink
-                to="/"
+                to="dashboard"
                 className={({ isActive }) =>
-                  isActive ? "text-[#D7FF9C]" : "text-white"
+                  isActive ? "text-[#D7FF9C]" : "text-white hover:text-[#d7ff9c]"
                 }
               >
                 <i className="ri-edit-2-line"></i>
               </NavLink>
             </li>
-
             <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
               <NavLink
                 to="bills"
                 className={({ isActive }) =>
-                  isActive ? "text-[#d7ff9c]" : "text-white"
+                  isActive ? "text-[#d7ff9c]" : "text-white hover:text-[#d7ff9c]"
                 }
               >
                 <i className="ri-survey-line"></i>
               </NavLink>
             </li>
-
             <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
               <NavLink
                 to="stock"
                 className={({ isActive }) =>
-                  isActive ? "text-[#d7ff9c]" : "text-white"
+                  isActive ? "text-[#d7ff9c]" : "text-white hover:text-[#d7ff9c]"
                 }
               >
                 <i className="ri-truck-line"></i>
               </NavLink>
             </li>
-            <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
+            <li className="px-2 py-1  bg-neutral-900 rounded-full flex items-center justify-center">
               <NavLink
                 to="logs"
-                className={({ isActive }) =>
-                  isActive ? "text-[#d7ff9c]" : "text-white"
+                className={ ({ isActive }) =>
+                  isActive ? "text-[#d7ff9c]" : "text-white hover:text-[#d7ff9c]" 
                 }
               >
                 <i className="ri-hourglass-2-fill"></i>
               </NavLink>
+            </li>
+            <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
+              <button
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className={`text-white hover:text-red-400 transition-colors ${
+                  isLoggingOut ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                }`}
+                title="Logout"
+              >
+                {isLoggingOut ? (
+                  <i className="ri-loader-4-line animate-spin"></i>
+                ) : (
+                  <i className="ri-logout-box-r-line"></i>
+                )}
+              </button>
             </li>
           </ul>
           <div
