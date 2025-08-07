@@ -358,8 +358,8 @@ const AllProducts = ({ products, setProducts }) => {
       <div className={`filter-container mt-4 transition-all duration-300`}>
         <div className="w-full sm:w-[50%] mx-auto flex flex-col items-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl sm:max-w-xl mx-auto mb-4">
-              <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl px-4 py-4">
+            <div className="max-w-4xl sm:max-w-xl mx-auto mb-7">
+              <div className="bg-[#1E2228] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-lg px-4 py-4">
                 <div className="flex h-fit py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
                   <button
                     onClick={() => setActiveFilter(0)}
@@ -411,7 +411,7 @@ const AllProducts = ({ products, setProducts }) => {
                               ? "bg-[#BEF264] text-black"
                               : isFiltered
                               ? "bg-zinc-900/30 border border-zinc-800 opacity-50 cursor-not-allowed"
-                              : "bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
+                              : "bg-zinc-950/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
                           }`}
                         >
                           <div className="flex flex-col items-center space-y-1 sm:space-y-2">

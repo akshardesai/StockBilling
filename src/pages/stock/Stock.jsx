@@ -62,16 +62,18 @@ const Stock = () => {
 
   //fetch all products from appwrite
   async function readAllProductsDB() {
-    const data = await readAllProduct();
-    if (data) {
+    const response = await readAllProduct();
+    if (response.success) {
       // c("got the data stock page");
       // c(data.documents);
 
       //   const sizes = data.map((row) => c(row));
 
-      setProducts(data.documents);
+      setProducts(response.data.documents);
     } else {
-      // c("data not fetched stock page");
+      setShowAlert(true)
+      setAlertType("error")
+      setAlertMessage(response.error)
     }
   }
 

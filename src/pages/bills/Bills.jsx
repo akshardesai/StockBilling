@@ -5,7 +5,7 @@ import {
   fetchDateBills,
   getAllBills,
 } from "../../utils/InvoicingTables";
-import "../../components/dashboard/print.css";
+import "../../components/invoice/print.css";
 import Calendar from "../../components/bills/Calendar";
 
 import SuccessNotification from "../../components/SuccessNotification";
@@ -68,13 +68,18 @@ const Bill = () => {
   ];
 
   async function fetchAllBillsDB(month, year) {
+    setIsLoading(true)
     const response = await getAllBills(month, year);
 
     if (response.success) {
       // console.log(response.data);
       setBills(response.data);
+      setIsLoading(false)
     } else {
-      console.log(response.error);
+     setShowAlert(true)
+      setAlertType("error")
+      setAlertMessage(response.error)
+      setIsLoading(false)
     }
   }
 
@@ -84,12 +89,13 @@ const Bill = () => {
   };
 
   async function deleteBill(bill) {
-    console.log(bill);
+
+    // c(bill);
     setIsLoading(true)
     const response = await deleteBillDocument(bill);
 
     if (response.success) {
-      console.log("deleted");
+      // c("deleted");
       setDeleteModal(false)
       setBills((prevData) => prevData.filter((otherBill) => otherBill.$id !== bill.$id));
       setShowSuccessNotification(true);
@@ -108,18 +114,26 @@ const Bill = () => {
   }
 
   async function fetchBillsForDate(date) {
+    setIsLoading(true)
     if (!date) return;
     try {
       const response = await fetchDateBills(date);
 
       if (response.success) {
-        console.log("successfuyll fetched bills", response.data);
+        // c("successfuyll fetched bills", response.data);
         setBills(response.data);
+        setIsLoading(false)
       } else {
-        console.log("failed to fetch date bills", response.error);
+        setShowAlert(true)
+      setAlertType("error")
+      setAlertMessage(response.error)
+      setIsLoading(false)
       }
     } catch (error) {
-      console.log(`catched error billsjsx ${error}`);
+      setShowAlert(true)
+      setAlertType("error")
+      setAlertMessage(`${error}`);
+      setIsLoading(false)
     }
   }
 
@@ -129,9 +143,9 @@ const Bill = () => {
 
 
 
-  useEffect(() => {
-    fetchAllBillsDB(currentMonth, currentYear);
-  }, []);
+  // useEffect(() => {
+  //   fetchAllBillsDB(currentMonth, currentYear);
+  // }, []);
 
   useEffect(() => {
     if (selectedDate === null) {
@@ -183,10 +197,10 @@ const Bill = () => {
               </div>
             </div>
             <div className="select-date-info-container px-7 flex justify-between md:w-[70%] md:mx-auto">
-              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl" >{currentMonth?monthNames[currentMonth]:"N/A"}</p>
-              <p className="font-mono text-sm bg-[#171717] px-4 py-2 rounded-t-xl">{selectedDate?selectedDate.split("-")[2]+" - "+ selectedDate.split("-")[0]:currentYear?currentYear:"N|A"}</p>
+              <p className="font-mono text-sm bg-[#1E2228] px-4 py-2 rounded-t-xl" >{currentMonth?monthNames[currentMonth]:"N/A"}</p>
+              <p className="font-mono text-sm bg-[#1E2228] px-4 py-2 rounded-t-xl">{selectedDate?selectedDate.split("-")[2]+" - "+ selectedDate.split("-")[0]:currentYear?currentYear:"N|A"}</p>
             </div>
-            <div className="bg-[#171717] rounded-lg  md:w-[70%] md:mx-auto ">
+            <div className="bg-[#1E2228] rounded-lg    md:w-[70%] md:mx-auto ">
               <div className=" px-6 py-6  sm:p-6 ">
                 {/* <div className="flex  justify-between items-center  mb-4 ">
                   <h2 className="text-lg sm:text-xl font-semibold text-neutral-200 ">
@@ -200,7 +214,7 @@ const Bill = () => {
                   </p>
                 </div> */}
 
-                <div className="overflow-x-auto -mx-3 sm:mx-0 border-2 rounded-lg border-zinc-800 bg-zinc-950/50   ">
+                <div className="overflow-x-auto overflow-y-scroll  max-h-[calc(100vh-35vh)] -mx-3 sm:mx-0 border-2 rounded-lg border-zinc-800 bg-black   ">
                   <table className="w-full  ">
                     <thead className="">
                       <tr className=" ">

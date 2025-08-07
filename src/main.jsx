@@ -15,7 +15,7 @@ import {
 } from "react-router-dom";
 
 
-import Dashboard from "./pages/dashboard/Dashboard.jsx";
+// import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Stock from "./pages/Stock/Stock.jsx";
 // import Logs from "./pages/logs/Logs.jsx"
 
@@ -27,6 +27,8 @@ import AuthProvider from "./context/AuthProvider.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import Login from "./pages/login/Login.jsx";
 import Logs from "./pages/log/Logs.jsx";
+import Invoice from "./pages/invoice/Invoice.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
 
 
 
@@ -45,6 +47,7 @@ const router = createBrowserRouter(
       
       }>
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/invoice" element={<Invoice />} />
       <Route path="stock" element={<Stock />} />
       <Route path="logs" element={<Logs />} />
       <Route path="bills" element={<Bills/>} />

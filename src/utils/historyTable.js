@@ -1,5 +1,6 @@
 import { DATABASE_ID, db, HISTORY_COLLECTION_ID, Query } from "./appWrite";
 
+
 export async function fetchHisotryBillsPage() {
   try {
     const response = await db.listDocuments(
@@ -61,8 +62,22 @@ export async function fetchHistory(page, date) {
   }
 }
 
-export async function fetchMonthHistory(month, year) {
+export async function fetchMonthHistory(month, year,page) {
   try {
+    
+    let type = "";
+
+    if (page == 0) {
+      type = "billsPage";
+    } else if (page == 1) {
+      type = "stockPage";
+    } else if (page == 2) {
+      type = "invoicingPage";
+    } else {
+      return { success: false, error: "Failed to Filter" };
+    }
+
+
     const startDate = new Date(year, month, 1);
 
     const endDate = new Date(year, month + 1, 1);
@@ -71,6 +86,7 @@ export async function fetchMonthHistory(month, year) {
       DATABASE_ID,
       HISTORY_COLLECTION_ID,
       [
+        Query.equal("type", type),
         Query.greaterThanEqual("$createdAt", startDate.toISOString()),
         Query.lessThan("$createdAt", endDate.toISOString()),
         Query.orderDesc(),

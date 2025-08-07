@@ -28,7 +28,7 @@ const SuccessNotification = ({ showAlert, alertType, alertMessage, onClose }) =>
           rounded-xl shadow-2xl
         transition-all duration-300 ease-out border
         border-gray-600 
-        ${showAlert ? 'translate-x-0' : 'translate-x-80'}
+        ${showAlert ? 'translate-x-0' : 'translate-x-110'}
       `}>
         
      

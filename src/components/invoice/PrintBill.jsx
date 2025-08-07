@@ -7,36 +7,7 @@ const PrintBill = ({ data, setData, additionalInfo = null, setActiveTab,validati
   const { name, number } = data;
   const { $id, $createdAt } = additionalInfo||1;
   /* Dummy data so we can loop */
-  const invoices = [
-    {
-      id: "INV-1001",
-      customer: "John Doe",
-      amount: 1200,
-      issued: "2024-08-01",
-      due: "2024-08-15",
-    },
-    {
-      id: "INV-1002",
-      customer: "Jane Smith",
-      amount: 850,
-      issued: "2024-08-05",
-      due: "2024-08-20",
-    },
-    {
-      id: "INV-1003",
-      customer: "Acme Corp",
-      amount: 2500,
-      issued: "2024-08-07",
-      due: "2024-08-21",
-    },
-    {
-      id: "INV-1004",
-      customer: "Global Inc",
-      amount: 4750,
-      issued: "2024-08-10",
-      due: "2024-08-25",
-    },
-  ];
+
 
   console.log("data->", cartData);
   console.log("customer name", name);

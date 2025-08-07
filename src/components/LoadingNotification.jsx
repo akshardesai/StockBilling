@@ -17,7 +17,7 @@ const LoadingNotification = ({showLoading}) => {
           rounded-xl shadow-2xl
         transition-all duration-300 ease-out border
         border-gray-600 
-        ${showLoading ? 'translate-x-0' : 'translate-x-80'}
+        ${showLoading ? 'translate-x-0' : 'translate-x-80 '}
       `}>
         
      

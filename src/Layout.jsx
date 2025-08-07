@@ -40,7 +40,7 @@ function Layout() {
       <aside className="slider fixed top-0 z-50">
         <div
           id="slider-container"
-          className={`slider__container w-10 h-screen bg-black transition-transform duration-500 ease-in-out relative ${
+          className={`slider__container w-10 h-screen bg-[#1E2228] transition-transform duration-500 ease-in-out relative ${
             isOpen ? "translate-x-0" : "-translate-x-10"
           }`}
         >
@@ -48,6 +48,16 @@ function Layout() {
             <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
               <NavLink
                 to="dashboard"
+                className={({ isActive }) =>
+                  isActive ? "text-[#D7FF9C]" : "text-white hover:text-[#d7ff9c]"
+                }
+              >
+                <i className="ri-line-chart-line"></i>
+              </NavLink>
+            </li>
+            <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
+              <NavLink
+                to="invoice"
                 className={({ isActive }) =>
                   isActive ? "text-[#D7FF9C]" : "text-white hover:text-[#d7ff9c]"
                 }

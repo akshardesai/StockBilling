@@ -21,3 +21,16 @@ export const HISTORY_COLLECTION_ID = import.meta.env.VITE_HISTORY_COLLECTION_ID
 export const account = new Account(client)
 
 export {Query,ID};
+
+
+export async function getCurrentUser() {
+  try {
+    const user = await account.get();
+    console.log("Logged-in user:", user);
+    return user;
+  } catch (error) {
+    console.log("No user is logged in", error.message);
+    return null;
+  }
+}
+

@@ -3,6 +3,7 @@
 import {
   DATABASE_ID,
   db,
+  getCurrentUser,
   HEIGHTS_COLLECTION_ID,
   HISTORY_COLLECTION_ID,
   ID,
@@ -10,7 +11,9 @@ import {
 } from "./appWrite";
 
 export async function addProduct(product) {
-  try {
+  const user  = await getCurrentUser()
+  if (user) {
+      try {
     const productData = {
       size: product,
     };
@@ -36,6 +39,7 @@ export async function addProduct(product) {
       description: `Size created of name - ${product} , At - ${response.$createdAt}`,
       type: "stockPage",
       action: "create",
+      user:user.name
     };
 
     const historyResponse = await db.createDocument(
@@ -56,10 +60,16 @@ export async function addProduct(product) {
       error: `Got An Error In Creating A New Size - ${error}`,
     };
   }
+}else{
+  return {success:false,error:'Failed to define User'}
+}
 }
 
 export async function deleteSize(size) {
-  try {
+ const user = await getCurrentUser()
+
+ if (user) {
+   try {
     const deletedAt = new Date()
     console.log("size to be deleted -> ", size);
 
@@ -80,6 +90,7 @@ export async function deleteSize(size) {
       } , Size Deleted At - ${deletedAt.toISOString()}`  ,
       type: "stockPage",
       action: "delete",
+      user:user.name
     };
 
     const historyResponse = await db.createDocument(
@@ -97,10 +108,16 @@ export async function deleteSize(size) {
   } catch (error) {
     return { success: false, error: `Catched An Error ${error}` };
   }
+ }else{
+  return {success:false,error:'Failed to define user'}
+ }
 }
 
 export async function deleteHeight(height,size) {
-  try {
+  
+  const user = await getCurrentUser()
+  if (user) {
+      try {
     const deletedAt = new Date ()
     const response = await db.deleteDocument(
       DATABASE_ID,
@@ -119,6 +136,7 @@ export async function deleteHeight(height,size) {
        description: `Height deleted of name - ${height.height} , of Size - ${size.size} , with Quantity - ${height.quantity} , At - ${deletedAt.toISOString()} `,
       type: "stockPage",
       action: "delete",
+      user:user.name
 
     }
 
@@ -133,16 +151,19 @@ export async function deleteHeight(height,size) {
   } catch (error) {
     return { success: false, error: `Catched Error - ${error}` };
   }
+  }else{
+    return {success:false,error:'Failed to define User'}
+  }
 }
 
 export async function readAllProduct() {
-  // console.log('inside readall product function');
+  // c('inside readall product function');
 
   try {
     const response = await db.listDocuments(DATABASE_ID, SIZES_COLLECTION_ID);
 
     if (!response) {
-      console.log("if condition no response");
+      // c("if condition no response");
 
       return {
         success: false,
@@ -151,11 +172,11 @@ export async function readAllProduct() {
     }
 
     // c("returned response", response);
-    // console.log('response of readall product',response);
+    // c('response of readall product',response);
 
-    return response;
+      return {success:true,data:response}
   } catch (error) {
-    // console.log('direct inside catch maybe db error');
+    // c('direct inside catch maybe db error');
 
     return {
       success: false,
@@ -166,7 +187,10 @@ export async function readAllProduct() {
 }
 
 export async function addHeight(size, height, qty) {
-  try {
+  const user = await getCurrentUser()
+
+  if (user) {
+      try {
     // c(product_id, height, qty);
 
     const data = {
@@ -194,6 +218,8 @@ export async function addHeight(size, height, qty) {
       description: `Height created of name - ${height} , Quantity - ${qty} , In Size - ${size.size} , At - ${response.$createdAt} ,  sizeId - ${size.$id} , size Created At - ${size.$createdAt}`,
       type: "stockPage",
       action: "create",
+      user:user.name
+
     };
 
     const historyResponse = await db.createDocument(
@@ -214,11 +240,17 @@ export async function addHeight(size, height, qty) {
       error: `Caught An Error In Fetching Sizes - ${error}`,
     };
   }
+  }else{
+    return {success:false,error:'Failed to define User'}
+  }
 }
 
 export async function updateHeight(heightObject, updatedHeight, updatedQuantity) {
 
-  const row = {
+  const user = await getCurrentUser()
+
+  if (user) {
+      const row = {
     height: updatedHeight,
     quantity: parseInt(updatedQuantity),
   };
@@ -240,7 +272,8 @@ export async function updateHeight(heightObject, updatedHeight, updatedQuantity)
     const historyData = {
       description:`Updated Height Name -  ${heightObject.height} to ${updatedHeight} , Quantity - ${heightObject.quantity} to ${updatedQuantity} , At - ${response.$updatedAt}`,
       type:'stockPage',
-      action:'edit'
+      action:'edit',
+      user:user.name
 
     }
 
@@ -256,12 +289,17 @@ export async function updateHeight(heightObject, updatedHeight, updatedQuantity)
 
     return { success: false, error: `Catched An Error ${error}` };
   }
+  }else{
+    return {success:false,error:'Failed to define User'}
+  }
+
 }
 
 export async function lessQuantityBy1(height, size) {
 
-  console.log('reduce height ->',height);
-  
+  const user = await getCurrentUser()
+
+  if(user){
   try {
     const row = {
       quantity: parseInt(height.quantity - 1),
@@ -283,7 +321,8 @@ export async function lessQuantityBy1(height, size) {
     const historyData = {
       description:`reduced the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity-1} , At - ${response.$updatedAt} `,
       type:'stockPage',
-      action:'edit'
+      action:'edit',
+      user:user.name
     }
 
     const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
@@ -296,9 +335,19 @@ export async function lessQuantityBy1(height, size) {
   } catch (error) {
     return { success: false, error: `Catched An Error - ${error}` };
   }
+  }else{
+    return {success:false,error:'Failed to define User'}
+  }
+  
+
 }
 
 export async function addQuantityBy1(height,size) {
+
+  const user = await getCurrentUser()
+
+  if (user) {
+ 
   try {
     const row = {
       quantity: parseInt(height.quantity + 1),
@@ -320,7 +369,8 @@ export async function addQuantityBy1(height,size) {
        const historyData = {
       description:`Increased the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity+1} , At - ${response.$updatedAt} `,
       type:'stockPage',
-      action:'Edit'
+      action:'Edit',
+      user:user.name
     }
 
     const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
@@ -332,5 +382,8 @@ export async function addQuantityBy1(height,size) {
     return { success: true, data: response };
   } catch (error) {
     return { success: false, error: `Catched An Error - ${error}` };
+  }   
+  }else{
+    return {success:false,error:'Failed to define User'}
   }
 }

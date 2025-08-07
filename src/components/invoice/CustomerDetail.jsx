@@ -1,11 +1,11 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
 
   const {cartData}=data
   const {name}=data
   const{number}=data
- 
+ let total = 0 
  
 
   
@@ -36,7 +36,7 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
     <div className=" px-4">
 
       {/*<!--============== Customer Info Container ==============-->*/}
-      <div className="bg-[#171717] sm:w-[30%] mx-auto backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-4">
+      <div className="bg-[#1E2228] sm:w-[30%] mx-auto backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-4">
       
       <div className="form-container">
         <form  className=''>
@@ -53,6 +53,41 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
  }  className='w-ful px-2 bg-black  rounded-lg py-2 text-white  focus:border-lime-300/60 focus:outline-none border-2 border-gray-400/40' />
           </div>
 
+          <div className="flex flex-col  px-4 mb-2">
+
+          <label htmlFor="number" className='mb-2 ms-1 font-semibold'>Payment</label>
+   
+              <div className="w-full">
+
+
+<ul class=" w-full flex gap-4   ">
+    <li>
+        <input type="radio" id="hosting-small" name="hosting" value="1" class="hidden peer" required />
+        <label for="hosting-small" class="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-lime-300/30  peer-checked:text-lime-200 hover:text-white hover:bg-gray-900 ">                           
+            <div class="pe-4">
+                <div class="w-full text-lg font-semibold">Paid</div>
+               
+            </div>
+           <i class="ri-emotion-happy-line text-lg"></i>
+        </label>
+    </li>
+    <li>
+        <input type="radio" id="hosting-big" name="hosting" value="2" class="hidden peer"/>
+        <label for="hosting-big" class="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-red-300/30   peer-checked:text-red-200 hover:text-white hover:bg-gray-900 ">
+            <div class="pe-4">
+                <div class="w-full text-lg font-semibold">Pending</div>
+                
+            </div>
+          <i class="ri-emotion-unhappy-line text-lg "></i>
+        </label>
+    </li>
+</ul>
+
+              </div>
+
+          </div>
+
+
         </form>
       </div>
 
@@ -63,7 +98,8 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
         {/*<!--============== Cart Container ==============-->*/}
            <div className="container mx-auto   ">
              <div className="max-w-4xl mx-auto">
-               <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+               <div className="bg-[#1E2228] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+                 <p className="text-end pe-4">To Pay - {total}</p>
                  <div className="flex items-center justify-between mb-2 sm:mb-3">
                    <div className="flex items-center space-x-2">
                      <span className="text-xs sm:text-sm text-gray-400">
@@ -75,7 +111,7 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
                  {/*<!--==============  items Table ==============-->*/}
                  <div className="flex h-full py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
                    {cartData && cartData.length > 0 ? (
-                     <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950/50">
+                     <div className="w-full rounded-lg border border-zinc-800 bg-black">
                        <div className="relative w-full overflow-auto">
                          <table className="w-full caption-bottom text-sm">
                            <thead className="[&_tr]:border-b border-zinc-800">
@@ -100,7 +136,10 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
                            <tbody className="[&_tr:last-child]:border-0">
                              {cartData.map((sizeItem) => (
                                <Fragment key={sizeItem.$id}>
-                                 {sizeItem.heights.map((heightItem, heightIndex) => (
+                                 {sizeItem.heights.map((heightItem, heightIndex) => 
+                                 
+                                 {  total+=heightItem.price * heightItem.cartQuantity
+                                return  (
                                    <tr
                                      key={heightItem.$id}
                                      className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50"
@@ -130,22 +169,29 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
                                      </td>
                                      <td className="p-1  sm:p-4">
                                        <div className="text-zinc-300">
+                                        
                                          {heightItem.price * heightItem.cartQuantity}
                                        </div>
                                      </td>
                                      
                                    </tr>
-                                 ))}
+                                 )
+                                }
+                                 
+                                 
+                                 )}
                                </Fragment>
                              ))}
                            </tbody>
                          </table>
+
                        </div>
                      </div>
                    ) : (
                      ""
-                   )}
+                    )}
                  </div>
+                   
                </div>
              </div>
            </div>

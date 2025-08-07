@@ -8,6 +8,7 @@ import {
   CART_COLLECTION_ID,
   HISTORY_COLLECTION_ID,
   Query,
+  getCurrentUser,
 } from "./appWrite";
 
 async function checkItemsInStock(billinfo) {
@@ -37,7 +38,11 @@ async function checkItemsInStock(billinfo) {
   }
 }
 
-export async function createBill(billInfo) {
+export async function createBill(billInfo,total) {
+
+ 
+  
+
   //first find size and height exists if yes deduct the stock validate that it is not less than 1 and then proceed with creating bill
   let validationArray = [];
   try {
@@ -52,7 +57,7 @@ export async function createBill(billInfo) {
       const billData = {
         name: billInfo.name,
         number: parseInt(billInfo.number),
-        totalAmount: 101,
+        totalAmount: parseInt(total),
       };
 
       const billResponse = await db.createDocument(
@@ -205,14 +210,17 @@ export async function getAllBills(month, year) {
   } catch (error) {
     return {
       success: false,
-      error: `Catched Error in fetching bills ${error}`,
+      error: `Catched Error in fetching bills ${error}`, 
     };
   }
 }
 
 export async function deleteBillDocument(bill) {
   
-  try {
+  const user = await getCurrentUser()
+
+  if (user) {
+      try {
     const deletedAt = new Date()
     const response = await db.deleteDocument(
       DATABASE_ID,
@@ -228,6 +236,7 @@ export async function deleteBillDocument(bill) {
       description: `Bill Deleted of name - ${bill.name} , number - ${bill.number} , totalAmount - ${bill.totalAmount} , deleted at - ${deletedAt.toISOString()} , created at - ${bill.$createdAt}`,
       type: "billsPage",
       action: "delete",
+      user:user.name
     };
 
     const historyResponse = await db.createDocument(
@@ -248,6 +257,10 @@ export async function deleteBillDocument(bill) {
       error: `Catched Error in deleteing bill ${error}`,
     };
   }
+  }else{
+    return {success:false,error:'Failed to define User'}
+  }
+
 }
 
 // fetch bills based on specific date
@@ -282,20 +295,33 @@ export async function fetchDateBills(date) {
 }
 
 export async function recordBillHistory(bill, cart) {
-  try {
-    const historyData = {
-      description: `New Bill Name - ${bill.name} , Number - ${bill.number} , TotalAmount - ${bill.TotalAmount} , Created At - ${bill.$createdAt} , Cart : ${cart.map((entry)=> entry.height_name + "|"+ entry.price + "|"+ entry.qty + "|"+ entry.total)}`,
-      type: "invoicingPage",
-      action: "create",
-    };
 
 
-    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
+  const user = await  getCurrentUser()
 
-    if (!historyResponse) {
-      alert ('Failed to record history of bill')
+  
+
+  if (user) {
+    
+    
+    try {
+      const historyData = {
+        description: `New Bill Name - ${bill.name} , Number - ${bill.number} , TotalAmount - ${bill.TotalAmount} , Created At - ${bill.$createdAt} , Cart : ${cart.map((entry)=> entry.height_name + "|"+ entry.price + "|"+ entry.qty + "|"+ entry.total)}`,
+        type: "invoicingPage",
+        action: "create",
+        user:user.name,
+      };
+      
+      
+      const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
+      
+      if (!historyResponse) {
+        alert ('Failed to record history of bill')
+      }
+    } catch (error) {
+      alert (`Failed to record history of bill Error - ${error}`)
     }
-  } catch (error) {
-    alert (`Failed to record history of bill Error - ${error}`)
+  }else{
+    return {success:false,error:'Failed to define User'}
   }
 }

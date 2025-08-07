@@ -15,16 +15,23 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
 
   const [heightToAdd, setHeightToAdd] = useState(null);
 
+  let total = 0
+
+
+
   async function readAllProductsDB() {
     try {
       setIsLoading(true);
-      const data = await readAllProduct();
-      if (data) {
-        setProducts(data.documents);
+      const response = await readAllProduct();
+      if (response.success) {
+        setProducts(response.data.documents);
         // (data.documents);
+      }else{
+        alert(response.error)
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      // c("Error fetching products:", error);
+      alert(response.error)
     } finally {
       setIsLoading(false);
     }
@@ -272,7 +279,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8   ">
           {/* Size Filter Section */}
           <div className="max-w-4xl mx-auto mb-4 ">
-            <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+            <div className="bg-[#1E2228] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
@@ -291,7 +298,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
                     className={`group relative overflow-hidden rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-105 flex-shrink-0 min-w-[60px] sm:min-w-[80px] ${
                       selectedSize === s
                         ? "bg-[#BEF264] text-black shadow-lg shadow-[#BEF264]/20"
-                        : "bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
+                        : "bg-zinc-950/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
                     }`}
                   >
                     <div className="flex flex-col items-center space-y-1 sm:space-y-2">
@@ -313,7 +320,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
         {/*<!--============== Selected Size Height Table ==============-->*/}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:w-[80%] ">
           <div className="max-w-4xl mx-auto mb-4 ">
-            <div className="bg-[#171717] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+            <div className="bg-[#1E2228] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
@@ -325,7 +332,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
               {/*<!--==============  Height Table ==============-->*/}
               <div className="flex h-fit sm:min-h-[255px] py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
                 {selectedSize ? (
-                  <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950/50">
+                  <div className="w-full rounded-lg border border-zinc-800 bg-black">
                     <div className="relative w-full overflow-auto">
                       <table className="w-full caption-bottom text-sm">
                         <thead className="[&_tr]:border-b border-zinc-800">
@@ -400,19 +407,21 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
         {/*<!--============== Cart Container ==============-->*/}
         <div className="container mx-auto px-4 md:w-[70%] ">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-[#171717] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+            <div className="bg-[#1E2228] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
               <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="flex items-center space-x-2">
+                <div className="w-full flex items-center space-x-4 ">
                   <span className="text-xs sm:text-sm text-gray-400">
                     {cartData ? cartData.length : "No"} item in Cart
                   </span>
+
+                 
                 </div>
               </div>
 
               {/*<!--==============  items Table ==============-->*/}
               <div className="flex h-full py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
                 {cartData && cartData.length > 0 ? (
-                  <div className="w-full rounded-lg border border-zinc-800 bg-zinc-950/50">
+                  <div className="w-full rounded-lg border border-zinc-800 bg-black">
                     <div className="relative w-full overflow-auto">
                       <table className="w-full caption-bottom text-sm">
                         <thead className="[&_tr]:border-b border-zinc-800">
@@ -470,6 +479,12 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
                                       <div className="text-zinc-300">
                                         {heightItem.price *
                                           heightItem.cartQuantity}
+
+                                          <p className="hidden">
+
+                                          {total+(heightItem.price *
+                                          heightItem.cartQuantity)}
+                                          </p>
                                       </div>
                                     </td>
                                   </tr>
