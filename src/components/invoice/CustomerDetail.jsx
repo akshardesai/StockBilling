@@ -30,6 +30,22 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
     
   })
  }
+
+ function handlePaymentStatus(status){
+
+
+        setData((prevData)=>{
+          console.log(prevData);
+          return{
+            ...prevData,
+            payment_status:status
+          }
+        
+          
+        })
+
+
+ }
   
 
   return (
@@ -60,25 +76,25 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
               <div className="w-full">
 
 
-<ul class=" w-full flex gap-4   ">
+<ul className=" w-full flex gap-4   ">
     <li>
-        <input type="radio" id="hosting-small" name="hosting" value="1" class="hidden peer" required />
-        <label for="hosting-small" class="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-lime-300/30  peer-checked:text-lime-200 hover:text-white hover:bg-gray-900 ">                           
-            <div class="pe-4">
-                <div class="w-full text-lg font-semibold">Paid</div>
+        <input onClick={()=>handlePaymentStatus(1)} type="radio" id="hosting-small" name="hosting" value="1" className="hidden peer"   />
+        <label htmlFor="hosting-small" className="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-lime-300/30  peer-checked:text-lime-200 hover:text-white hover:bg-gray-900 ">                           
+            <div className="pe-4">
+                <div className="w-full text-lg font-semibold">Paid</div>
                
             </div>
-           <i class="ri-emotion-happy-line text-lg"></i>
+           <i className="ri-emotion-happy-line text-lg"></i>
         </label>
     </li>
     <li>
-        <input type="radio" id="hosting-big" name="hosting" value="2" class="hidden peer"/>
-        <label for="hosting-big" class="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-red-300/30   peer-checked:text-red-200 hover:text-white hover:bg-gray-900 ">
-            <div class="pe-4">
-                <div class="w-full text-lg font-semibold">Pending</div>
+        <input onClick={()=>handlePaymentStatus(2)} type="radio" id="hosting-big" name="hosting" value="2" className="hidden peer"  />
+        <label htmlFor="hosting-big" className="inline-flex items-center justify-between w-full px-3 py-1 text-white bg-black border-2 border-gray-400/40 rounded-lg cursor-pointer  peer-checked:border-red-300/30   peer-checked:text-red-200 hover:text-white hover:bg-gray-900 ">
+            <div className="pe-4">
+                <div className="w-full text-lg font-semibold">Pending</div>
                 
             </div>
-          <i class="ri-emotion-unhappy-line text-lg "></i>
+          <i className="ri-emotion-unhappy-line text-lg "></i>
         </label>
     </li>
 </ul>
@@ -99,11 +115,14 @@ const CustomerDetail = ({data,setData,additionalInfo=null,validationArray}) => {
            <div className="container mx-auto   ">
              <div className="max-w-4xl mx-auto">
                <div className="bg-[#1E2228] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
-                 <p className="text-end pe-4">To Pay - {total}</p>
-                 <div className="flex items-center justify-between mb-2 sm:mb-3">
-                   <div className="flex items-center space-x-2">
+                 
+                 <div className="flex  items-center justify-between mb-2 sm:mb-3">
+                   <div className="flex w-full items-center justify-between  px-4">
                      <span className="text-xs sm:text-sm text-gray-400">
                        {cartData ? cartData.length : "No"} item in Cart
+                     </span>
+                     <span className="text-xs sm:text-sm text-gray-400">
+                       Total Amount - {data.total ? data.total : "0"} 
                      </span>
                    </div>
                  </div>

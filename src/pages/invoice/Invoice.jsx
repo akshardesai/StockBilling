@@ -34,10 +34,7 @@ const Invoice = () => {
     name: "",
     number: null,
     total:0,
-    // billId:null,
-    // date:null,
-    // time:null,
-
+    payment_status:0,
     cartData: [],
   });
 
@@ -180,7 +177,7 @@ const Invoice = () => {
                   Previous
                 </button>
               )}
-              {activeTab === 1 && data.name.length > 0 && (
+              {activeTab === 1 && data.name.length>0 && data.payment_status!=0   && (
                 <button
                   onClick={handleSubmitBtn}
                   className="px-4 p-2 text-black bg-white cursor-pointer font-semibold rounded-md"

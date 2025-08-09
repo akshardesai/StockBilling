@@ -10,6 +10,7 @@ import {
   Query,
   getCurrentUser,
 } from "./appWrite";
+import { formatTime } from "./historyTable";
 
 async function checkItemsInStock(billinfo) {
   try {
@@ -58,6 +59,7 @@ export async function createBill(billInfo,total) {
         name: billInfo.name,
         number: parseInt(billInfo.number),
         totalAmount: parseInt(total),
+        payment_status:`${billInfo.payment_status}`
       };
 
       const billResponse = await db.createDocument(
@@ -222,6 +224,8 @@ export async function deleteBillDocument(bill) {
   if (user) {
       try {
     const deletedAt = new Date()
+    const date = deletedAt.toISOString().split("T")[0]
+    const time = formatTime(deletedAt.toISOString())
     const response = await db.deleteDocument(
       DATABASE_ID,
       BILLS_COLLECTION_ID,
@@ -233,7 +237,7 @@ export async function deleteBillDocument(bill) {
     }
 
     const data = {
-      description: `Bill Deleted of name - ${bill.name} , number - ${bill.number} , totalAmount - ${bill.totalAmount} , deleted at - ${deletedAt.toISOString()} , created at - ${bill.$createdAt}`,
+      description: `Bill Deleted of name - ${bill.name} , number - ${bill.number} , totalAmount - ${bill.totalAmount} , deleted at - ${date} - ${time} , created at - ${bill.$createdAt}`,
       type: "billsPage",
       action: "delete",
       user:user.name
@@ -306,7 +310,7 @@ export async function recordBillHistory(bill, cart) {
     
     try {
       const historyData = {
-        description: `New Bill Name - ${bill.name} , Number - ${bill.number} , TotalAmount - ${bill.TotalAmount} , Created At - ${bill.$createdAt} , Cart : ${cart.map((entry)=> entry.height_name + "|"+ entry.price + "|"+ entry.qty + "|"+ entry.total)}`,
+        description: `New Bill Name - ${bill.name} , Number - ${bill.number} , TotalAmount - ${bill.TotalAmount} , Payment Status ${bill.payment_status==1?"Paid":"Pending"} ,  Created At - ${bill.$createdAt.split("T")[0]} - ${formatTime(bill.$createdAt)} , Cart : ${cart.map((entry)=> entry.height_name + "|"+ entry.price + "|"+ entry.qty + "|"+ entry.total)}`,
         type: "invoicingPage",
         action: "create",
         user:user.name,
@@ -323,5 +327,62 @@ export async function recordBillHistory(bill, cart) {
     }
   }else{
     return {success:false,error:'Failed to define User'}
+  }
+}
+
+export async function editBillStatusDB(bill){
+
+  
+  
+
+  const user = await getCurrentUser()
+
+  if (user) {
+    
+  
+
+  try {
+
+    if (bill.payment_status>2 || bill.payment_status<1) {
+      return {success:false,error:'Failed to fetch payment_status from Server'}
+    }
+
+    const data={
+      payment_status:bill.payment_status==1?"2":"1"
+    }
+
+
+    const response = await db.updateDocument(DATABASE_ID,BILLS_COLLECTION_ID,bill.$id,data)
+
+    if (!response) {
+      return {success:false,error:'Failed to update payment_status server error !'}
+    }
+
+
+
+     const historyData = {
+        description: `Updated Bill Payment Status of , Name - ${bill.name} , Number - ${bill.number} , TotalAmount - ${bill.totalAmount} , Payment Status - ${bill.payment_status==1?"From Paid To Pending":"From Pending To Paid"} , Created At - ${bill.$createdAt.split("T")[0]} - ${formatTime(bill.$createdAt)} , Updated At - ${response.$updatedAt.split("T")[0]} - ${formatTime(response.$updatedAt)}  , Cart : ${bill.cart.map((entry)=> entry.height_name + "|"+ entry.price + "|"+ entry.qty + "|"+ entry.total)}`,
+        type: "billsPage",
+        action: "edit",
+        user:user.name
+      };
+      
+      
+    const historyResponse = await db.createDocument(DATABASE_ID,HISTORY_COLLECTION_ID,ID.unique(),historyData)
+
+    if (!historyResponse) {
+      alert ("Failed to record history of updating bill")
+    }
+    
+    
+    return {success:true}
+
+
+
+
+  } catch (error) {
+    return {success:false,error:`Found Error - ${error} `}    
+  } }else{
+    return {success:false,error:"Failed to define User"}
   }
 }

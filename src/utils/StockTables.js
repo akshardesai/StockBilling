@@ -7,8 +7,10 @@ import {
   HEIGHTS_COLLECTION_ID,
   HISTORY_COLLECTION_ID,
   ID,
+  Query,
   SIZES_COLLECTION_ID,
 } from "./appWrite";
+import { formatTime } from "./historyTable";
 
 export async function addProduct(product) {
   const user  = await getCurrentUser()
@@ -36,7 +38,7 @@ export async function addProduct(product) {
     
 
     const historyData = {
-      description: `Size created of name - ${product} , At - ${response.$createdAt}`,
+      description: `Size created of name - ${product} , At - ${response.$createdAt.split("T")[0]} - ${formatTime(response.$createdAt)}`,
       type: "stockPage",
       action: "create",
       user:user.name
@@ -70,7 +72,10 @@ export async function deleteSize(size) {
 
  if (user) {
    try {
-    const deletedAt = new Date()
+     const deletedAt = new Date()
+    const date = deletedAt.toISOString().split("T")[0]
+    const time = formatTime(deletedAt.toISOString())
+
     console.log("size to be deleted -> ", size);
 
     const response = await db.deleteDocument(
@@ -87,7 +92,7 @@ export async function deleteSize(size) {
       description: `Size deleted of name - ${size.size} , heights - ${
         size.heights.map((height) => height.height + "|" + height.quantity) ||
         "N|A"
-      } , Size Deleted At - ${deletedAt.toISOString()}`  ,
+      } , Size Deleted At - ${date} - ${time}`  ,
       type: "stockPage",
       action: "delete",
       user:user.name
@@ -118,7 +123,10 @@ export async function deleteHeight(height,size) {
   const user = await getCurrentUser()
   if (user) {
       try {
-    const deletedAt = new Date ()
+       const deletedAt = new Date()
+    const date = deletedAt.toISOString().split("T")[0]
+    const time = formatTime(deletedAt.toISOString())
+
     const response = await db.deleteDocument(
       DATABASE_ID,
       HEIGHTS_COLLECTION_ID,
@@ -133,7 +141,7 @@ export async function deleteHeight(height,size) {
 
     const historyData={
 
-       description: `Height deleted of name - ${height.height} , of Size - ${size.size} , with Quantity - ${height.quantity} , At - ${deletedAt.toISOString()} `,
+       description: `Height deleted of name - ${height.height} , of Size - ${size.size} , with Quantity - ${height.quantity} , At - ${date} - ${time} `,
       type: "stockPage",
       action: "delete",
       user:user.name
@@ -160,7 +168,7 @@ export async function readAllProduct() {
   // c('inside readall product function');
 
   try {
-    const response = await db.listDocuments(DATABASE_ID, SIZES_COLLECTION_ID);
+    const response = await db.listDocuments(DATABASE_ID, SIZES_COLLECTION_ID,[Query.orderDesc()]);
 
     if (!response) {
       // c("if condition no response");
@@ -215,7 +223,7 @@ export async function addHeight(size, height, qty) {
     }
 
       const historyData = {
-      description: `Height created of name - ${height} , Quantity - ${qty} , In Size - ${size.size} , At - ${response.$createdAt} ,  sizeId - ${size.$id} , size Created At - ${size.$createdAt}`,
+      description: `Height created of name - ${height} , Quantity - ${qty} , In Size - ${size.size} , At - ${response.$createdAt.split("T")[0]} - ${formatTime(response.$createdAt)} ,  sizeId - ${size.$id} , size Created At - ${size.$createdAt.split("T")[0]} - ${formatTime(size.$createdAt)}`,
       type: "stockPage",
       action: "create",
       user:user.name
@@ -270,7 +278,7 @@ export async function updateHeight(heightObject, updatedHeight, updatedQuantity)
 
 
     const historyData = {
-      description:`Updated Height Name -  ${heightObject.height} to ${updatedHeight} , Quantity - ${heightObject.quantity} to ${updatedQuantity} , At - ${response.$updatedAt}`,
+      description:`Updated Height Name -  ${heightObject.height} to ${updatedHeight} , Quantity - ${heightObject.quantity} to ${updatedQuantity} , At - ${response.$updatedAt.split("T")[0]} - ${formatTime(response.$updatedAt)}`,
       type:'stockPage',
       action:'edit',
       user:user.name
@@ -319,7 +327,7 @@ export async function lessQuantityBy1(height, size) {
     }
 
     const historyData = {
-      description:`reduced the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity-1} , At - ${response.$updatedAt} `,
+      description:`reduced the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity-1} , At - ${response.$updatedAt.split("T")[0]} - ${formatTime(response.$updatedAt)} , Size - ${size.size}`,
       type:'stockPage',
       action:'edit',
       user:user.name
@@ -367,7 +375,7 @@ export async function addQuantityBy1(height,size) {
     }
 
        const historyData = {
-      description:`Increased the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity+1} , At - ${response.$updatedAt} `,
+      description:`Increased the quantity  Height - ${height.height} , Quantity - ${height.quantity} to ${height.quantity+1} , At - ${response.$updatedAt.split("T")[0]} - ${formatTime(response.$updatedAt)} , Size - ${size.size} `,
       type:'stockPage',
       action:'Edit',
       user:user.name

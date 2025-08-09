@@ -12,6 +12,7 @@ import SuccessNotification from "../../components/SuccessNotification";
 import LoadingNotification from "../../components/LoadingNotification";
 import Alert from "../../components/Alert";
 import { formatTime } from "../../utils/historyTable";
+import EditBillModal from "../../components/bills/EditBillModal";
 
 
 const Bill = () => {
@@ -39,6 +40,11 @@ const Bill = () => {
 
     //show processing / loading notification state
     const [isLoading, setIsLoading] = useState(false);
+
+
+  //show edit payment status modal
+
+  const [editBillModal,setEditBillModal]=useState(false)
 
   const tableData = [
     {
@@ -178,6 +184,8 @@ const Bill = () => {
     "December",
   ];
 
+ 
+
   return (
     <>
       <div>
@@ -228,7 +236,7 @@ const Bill = () => {
                           Date
                         </th>
                         <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm ">
-                          Phone Number
+                         Amount
                         </th>
 
                         <th className="text-left py-2 sm:py-3 px-3 sm:px-4 border-b-2 border-r-2  border-zinc-800  text-lime-300 font-bold  text-[12px] sm:text-sm">
@@ -252,6 +260,10 @@ const Bill = () => {
                                   {entry.name}
                                 </span>
 
+                                  <span className="font-medium block text-xs">
+                                   <span className="text-gray-400">No. -</span> {entry.number}
+                                </span>
+
                                 {/* Show email on mobile when date column is hidden */}
                                 <span className="text-xs text-neutral-400 block  mt-1 break-all">
                                   {entry.$createdAt.split("T")[0] || "N/A"}
@@ -263,8 +275,9 @@ const Bill = () => {
                               </div>
                             </td>
                             <td className="py-3 sm:py-4 px-3 sm:px-4 text-white  text-sm sm:text-base text-wrap border-r border-neutral-500/30">
-                              <button className={`inline-flex items-center  px-2.5 py-0.5 text-xs font-medium text-neutral-200 ${entry.payment_status?entry.payment_status==1?"bg-lime-500/30  ":"bg-red-500/30":"bg-gray-700"} rounded-md `}>
-                                {entry.number}
+                              <button onClick={()=>{setEditBillModal(true)
+                                 setDetailedBill(entry)}} className={`inline-flex items-center  px-2.5 py-0.5 text-xs font-medium text-neutral-200 ${entry.payment_status?entry.payment_status==1?"bg-lime-500/30  ":"bg-red-500/30":"bg-gray-700"} rounded-md `}>
+                                {entry.totalAmount}
                               </button>
                             </td>
                             <td className="py-3 sm:py-4 px-3 sm:px-4 text-neutral-300 text-sm sm:text-base text-wrap border-r border-neutral-500/30 hidden sm:table-cell">
@@ -529,6 +542,13 @@ const Bill = () => {
         </>
       )}
 
+      {editBillModal&&(
+
+        <EditBillModal detailedBill={detailedBill} setBills={setBills} setEditBillModal={setEditBillModal} setShowAlert={setShowAlert} setAlertMessage={setAlertMessage} setShowSuccessNotification={setShowSuccessNotification} setIsLoading={setIsLoading}  />
+      )
+
+      }
+
           <SuccessNotification
         showAlert={showSuccessNotification}
         alertType={alertType}
@@ -545,6 +565,8 @@ const Bill = () => {
 
 
         <LoadingNotification showLoading={isLoading} />
+
+        
 
     </>
   );

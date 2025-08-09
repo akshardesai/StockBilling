@@ -1,23 +1,51 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { addHeight, readAllProduct } from "../../utils/StockTables";
+import Alert from "../Alert";
 
-const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
+const Cart = ({ data, setData, additionalInfo = null, validationArray }) => {
   const [products, setProducts] = useState([]);
   const [selectedSize, setSelectedSize] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const [ispriceModal, setIsPriceModal] = useState(false);
-  const [isEditPriceModal,setIsEditPriceModal]=useState(false);
-
-
+  const [isEditPriceModal, setIsEditPriceModal] = useState(false);
 
   const [priceInput, setPriceInput] = useState("");
 
   const [heightToAdd, setHeightToAdd] = useState(null);
 
-  let total = 0
+  const { cartData } = data;
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("error");
+   
 
 
+
+  function calculateTotal(data) {
+    console.log("cartData", data);
+    let sum = 0;
+    data.forEach((size) => {
+      size.heights.forEach((height) => {
+        sum += height.price;
+      });
+    });
+
+    setData((prev)=>{
+      return{
+        ...prev,
+        total:sum
+      }
+    })
+    
+
+    
+  }
+
+  // calculateTotal(cartData)
+
+  useMemo(() => calculateTotal(cartData), [data.cartData])
 
   async function readAllProductsDB() {
     try {
@@ -26,12 +54,12 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
       if (response.success) {
         setProducts(response.data.documents);
         // (data.documents);
-      }else{
-        alert(response.error)
+      } else {
+        alert(response.error);
       }
     } catch (error) {
       // c("Error fetching products:", error);
-      alert(response.error)
+      alert(response.error);
     } finally {
       setIsLoading(false);
     }
@@ -65,47 +93,56 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
     AddHeightToCart(heightToAdd, price);
   };
 
-  const handlePriceEdit = (s,h,price)=>{
+  const handlePriceEdit = (s, h, price) => {
     //on click open modal
     //get price from modal
     //setprice to submited modal price
-    setIsEditPriceModal(true)
-    setPriceInput(price)
-    setHeightToAdd(h)
-    
-    
-  }
-  
-  const handleEditPriceSubmit = ()=>{
-    // ("heighttoedit =>",heightToAdd);
-    
-    setData((prevData)=>{
-       const oldCartData = prevData.cartData.map((sizeItem)=>{
-          return{...sizeItem,
-            heights:sizeItem.heights.map((heightItem)=>{
-              // ('height item->',heightItem);
-              
-              if (heightItem.$id!==heightToAdd.$id) {
-                return heightItem
-              }
-                return {
-                ...heightItem,
-                price:priceInput
-              }
-            })
-          }
-       })
-      // ("old cart data returned->",oldCartData);
-       
-       return {...prevData,cartData:oldCartData}
-       
-    })
+    setIsEditPriceModal(true);
+    setPriceInput(price);
+    setHeightToAdd(h);
+  };
 
-    setIsEditPriceModal(false)
-    setPriceInput("")
-  }
+  const handleEditPriceSubmit = () => {
+    // ("heighttoedit =>",heightToAdd);
+
+    setData((prevData) => {
+      const oldCartData = prevData.cartData.map((sizeItem) => {
+        return {
+          ...sizeItem,
+          heights: sizeItem.heights.map((heightItem) => {
+            // ('height item->',heightItem);
+
+            if (heightItem.$id !== heightToAdd.$id) {
+              return heightItem;
+            }
+            return {
+              ...heightItem,
+              price: priceInput,
+            };
+          }),
+        };
+      });
+      // ("old cart data returned->",oldCartData);
+
+      return { ...prevData, cartData: oldCartData };
+    });
+
+    setIsEditPriceModal(false);
+    setPriceInput("");
+  };
 
   const handleAddToCart = (h) => {
+
+    if (h.quantity<=0) {
+      
+      setShowAlert(true)
+      setAlertMessage("Not enough stock to sell the item")
+
+      
+        return;
+    }
+    
+
     const oldCart = data.cartData;
     const exists = oldCart.some(
       (size) =>
@@ -119,7 +156,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
       AddHeightToCart(h, h.price);
     } else {
       setIsPriceModal(true);
-      setHeightToAdd(h)
+      setHeightToAdd(h);
     }
   };
 
@@ -150,8 +187,13 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
           ],
         };
 
+        
         //return a new array with the old items plus the new one with unique size
-        return { ...prevCart, cartData: [...prevCart.cartData, newProduct] };
+        return {
+          ...prevCart,
+          cartData: [ newProduct,...prevCart.cartData],
+          
+        };
       } else {
         // ("size exists", prevCart.cartData);
 
@@ -171,13 +213,13 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
             return {
               ...sizeItem,
               heights: [
-                ...sizeItem.heights,
+             
                 {
                   $id: hId,
                   height: height,
                   cartQuantity: 1,
                   price: priceToAdd,
-                },
+                },   ...sizeItem.heights
               ],
             };
           }
@@ -189,6 +231,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
               if (heightItem.$id !== hId) {
                 return heightItem;
               }
+              
               return {
                 ...heightItem,
                 cartQuantity: heightItem.cartQuantity + 1,
@@ -248,10 +291,8 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
     readAllProductsDB();
   }, []);
 
-
   useEffect(() => {
     if (products) {
-      
       setSelectedSize(products[0]);
     }
   }, [products]);
@@ -269,7 +310,6 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
       </div>
     );
   }
-  const { cartData } = data;
 
   // ('cartData->',cartData);
 
@@ -283,230 +323,240 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
               <div className="flex items-center justify-between mb-2 sm:mb-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-xs sm:text-sm text-gray-400">
-                    {products?products.length : "N|A"} sizes available
+                    {products ? products.length : "N|A"} sizes available
                   </span>
                 </div>
               </div>
 
               <div className="flex h-fit py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
-                {products?products.map((s) => (
-                  <button
-                    key={s.$id}
-                    onClick={() =>
-                      setSelectedSize(selectedSize === s ? null : s)
-                    }
-                    className={`group relative overflow-hidden rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-105 flex-shrink-0 min-w-[60px] sm:min-w-[80px] ${
-                      selectedSize === s
-                        ? "bg-[#BEF264] text-black shadow-lg shadow-[#BEF264]/20"
-                        : "bg-zinc-950/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
-                    }`}
-                  >
-                    <div className="flex flex-col items-center space-y-1 sm:space-y-2">
-                      <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
-                        {s.size}
-                      </span>
-                    </div>
+                {products
+                  ? products.map((s) => (
+                      <button
+                        key={s.$id}
+                        onClick={() =>
+                          setSelectedSize(selectedSize === s ? null : s)
+                        }
+                        className={`group relative overflow-hidden rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-105 flex-shrink-0 min-w-[60px] sm:min-w-[80px] ${
+                          selectedSize === s
+                            ? "bg-[#BEF264] text-black shadow-lg shadow-[#BEF264]/20"
+                            : "bg-zinc-950/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"
+                        }`}
+                      >
+                        <div className="flex flex-col items-center space-y-1 sm:space-y-2">
+                          <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
+                            {s.size}
+                          </span>
+                        </div>
 
-                    {/* Hover effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#BEF264]/0 to-[#BEF264]/0 group-hover:from-[#BEF264]/5 group-hover:to-[#BEF264]/10 transition-all duration-300 rounded-lg sm:rounded-xl" />
-                  </button>
-                )):""}
+                        {/* Hover effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#BEF264]/0 to-[#BEF264]/0 group-hover:from-[#BEF264]/5 group-hover:to-[#BEF264]/10 transition-all duration-300 rounded-lg sm:rounded-xl" />
+                      </button>
+                    ))
+                  : ""}
               </div>
             </div>
           </div>
         </div>
 
-                <div className="sm:flex sm:w-[70%] sm:mx-auto">
-        {/*<!--============== Selected Size Height Table ==============-->*/}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:w-[80%] ">
-          <div className="max-w-4xl mx-auto mb-4 ">
-            <div className="bg-[#1E2228] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs sm:text-sm text-gray-400">
-                    Size {selectedSize ? selectedSize.size : "Not"} Selected
-                  </span>
-                </div>
-              </div>
-
-              {/*<!--==============  Height Table ==============-->*/}
-              <div className="flex h-fit sm:min-h-[255px] py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
-                {selectedSize ? (
-                  <div className="w-full rounded-lg border border-zinc-800 bg-black">
-                    <div className="relative w-full overflow-auto">
-                      <table className="w-full caption-bottom text-sm">
-                        <thead className="[&_tr]:border-b border-zinc-800">
-                          <tr className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50">
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Height
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Quantity
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Action
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="[&_tr:last-child]:border-0">
-                          {selectedSize.heights.map((h, index) => (
-                            <tr
-                              key={index}
-                              className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50"
-                            >
-                              <td className="p-2 sm:p-4">
-                                <div className="font-medium text-white">
-                                  {h.height}
-                                </div>
-                              </td>
-                              <td className="p-2 align-middle sm:p-4">
-                                <div className="text-zinc-300">
-                                  {h.quantity}
-                                </div>
-                              </td>
-                              <td className="p-1  sm:p-4">
-                                {cartData.some((sizeItem) =>
-                                  sizeItem.heights.some(
-                                    (heightItem) => heightItem.$id === h.$id
-                                  )
-                                ) ? (
-                                  <button
-                                    onClick={() => RemovHeightFromCart(h)}
-                                    className="inline-flex items-center me-3 justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-red-400 text-zinc-900 shadow-sm hover:bg-red-500 h-fit px-2 py-1"
-                                  >
-                                    <i className="ri-delete-bin-fill"></i>
-                                  </button>
-                                ) : (
-                                  ""
-                                )}
-
-                                <button
-                                  onClick={() => {
-                                    // setHeightToAdd(h);
-                                    handleAddToCart(h);
-                                  }}
-                                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-zinc-50 text-zinc-900 shadow-sm hover:bg-zinc-50/90 h-fit px-2 py-1"
-                                >
-                                  <i className="ri-add-box-line"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+        <div className="sm:flex sm:w-[70%] sm:mx-auto">
+          {/*<!--============== Selected Size Height Table ==============-->*/}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:w-[80%] ">
+            <div className="max-w-4xl mx-auto mb-4 ">
+              <div className="bg-[#1E2228] backdrop-blur-sm border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs sm:text-sm text-gray-400">
+                      Size {selectedSize ? selectedSize.size : "Not"} Selected
+                    </span>
                   </div>
-                ) : (
-                  ""
-                )}
+                </div>
+
+                {/*<!--==============  Height Table ==============-->*/}
+                <div className="flex h-fit sm:min-h-[255px] py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
+                  {selectedSize ? (
+                    <div className="w-full rounded-lg border border-zinc-800 bg-black">
+                      <div className="relative w-full overflow-auto">
+                        <table className="w-full caption-bottom text-sm">
+                          <thead className="[&_tr]:border-b border-zinc-800">
+                            <tr className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50">
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Height
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Quantity
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Action
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="[&_tr:last-child]:border-0">
+                            {selectedSize.heights.map((h, index) => (
+                              <tr
+                                key={index}
+                                className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50"
+                              >
+                                <td className="p-2 sm:p-4">
+                                  <div className="font-medium text-white">
+                                    {h.height}
+                                  </div>
+                                </td>
+                                <td className="p-2 align-middle sm:p-4">
+                                  <div className="text-zinc-300">
+                                    {h.quantity}
+                                  </div>
+                                </td>
+                                <td className="p-1  sm:p-4">
+                                  {cartData.some((sizeItem) =>
+                                    sizeItem.heights.some(
+                                      (heightItem) => heightItem.$id === h.$id
+                                    )
+                                  ) ? (
+                                    <button
+                                      onClick={() => RemovHeightFromCart(h)}
+                                      className="inline-flex items-center me-3 justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-red-400 text-zinc-900 shadow-sm hover:bg-red-500 h-fit px-2 py-1"
+                                    >
+                                      <i className="ri-delete-bin-fill"></i>
+                                    </button>
+                                  ) : (
+                                    ""
+                                  )}
+
+                                  <button
+                                    onClick={() => {
+                                      // setHeightToAdd(h);
+                                      handleAddToCart(h);
+                                    }}
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 bg-zinc-50 text-zinc-900 shadow-sm hover:bg-zinc-50/90 h-fit px-2 py-1"
+                                  >
+                                    <i className="ri-add-box-line"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/*<!--============== Cart Container ==============-->*/}
-        <div className="container mx-auto px-4 md:w-[70%] ">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-[#1E2228] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <div className="w-full flex items-center space-x-4 ">
-                  <span className="text-xs sm:text-sm text-gray-400">
-                    {cartData ? cartData.length : "No"} item in Cart
-                  </span>
-
-                 
+          {/*<!--============== Cart Container ==============-->*/}
+          <div className="container mx-auto px-4 md:w-[70%] ">
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-[#1E2228] backdrop-blur-sm max-h-[320px] border border-zinc-800 rounded-xl sm:rounded-2xl p-3 sm:p-4 overflow-y-auto">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <div className="w-full flex items-center justify-between  px-4 ">
+                    <span className="text-xs sm:text-sm text-gray-400">
+                      {cartData ? cartData.length : "No"} item in Cart
+                    </span>
+                    <span className="text-xs sm:text-sm text-gray-400">
+                      Total Amount {data.total?data.total:"0"}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {/*<!--==============  items Table ==============-->*/}
-              <div className="flex h-full py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
-                {cartData && cartData.length > 0 ? (
-                  <div className="w-full rounded-lg border border-zinc-800 bg-black">
-                    <div className="relative w-full overflow-auto">
-                      <table className="w-full caption-bottom text-sm">
-                        <thead className="[&_tr]:border-b border-zinc-800">
-                          <tr className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50">
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Size
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Height
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Quantity
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Price
-                            </th>
-                            <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
-                              Total
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="[&_tr:last-child]:border-0">
-                          {cartData.map((sizeItem) => (
-                            <Fragment key={sizeItem.$id}>
-                              {sizeItem.heights.map(
-                                (heightItem, heightIndex) => (
-                                  <tr
-                                    key={heightItem.$id}
-                                    className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50"
-                                  >
-                                    {heightIndex === 0 && (
-                                      <td
-                                        className="p-2 align-middle sm:p-4 font-medium"
-                                        rowSpan={sizeItem.heights.length}
-                                      >
-                                        {sizeItem.size}
+                {/*<!--==============  items Table ==============-->*/}
+                <div className="flex h-full py-2 px-1 sm:px-2 gap-2 sm:gap-3 overflow-x-auto scrollbar-hide text-white">
+                  {cartData && cartData.length > 0 ? (
+                    <div className="w-full rounded-lg border border-zinc-800 bg-black">
+                      <div className="relative w-full overflow-auto">
+                        <table className="w-full caption-bottom text-sm">
+                          <thead className="[&_tr]:border-b border-zinc-800">
+                            <tr className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50">
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Size
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Height
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Quantity
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Price
+                              </th>
+                              <th className="h-10 px-2 text-left align-middle font-medium text-zinc-400  sm:h-12 sm:px-4">
+                                Total
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="[&_tr:last-child]:border-0">
+                            {cartData.map((sizeItem) => (
+                              <Fragment key={sizeItem.$id}>
+                                {sizeItem.heights.map(
+                                  (heightItem, heightIndex) => (
+                                    <tr
+                                      key={heightItem.$id}
+                                      className="border-b border-zinc-800 transition-colors hover:bg-zinc-800/50"
+                                    >
+                                      {heightIndex === 0 && (
+                                        <td
+                                          className="p-2 align-middle sm:p-4 font-medium"
+                                          rowSpan={sizeItem.heights.length}
+                                        >
+                                          {sizeItem.size}
+                                        </td>
+                                      )}
+                                      <td className="p-2 sm:p-4">
+                                        <div className="font-medium text-white">
+                                          {heightItem.height}
+                                        </div>
                                       </td>
-                                    )}
-                                    <td className="p-2 sm:p-4">
-                                      <div className="font-medium text-white">
-                                        {heightItem.height}
-                                      </div>
-                                    </td>
-                                    <td className="p-2 align-middle sm:p-4">
-                                      <div className="text-zinc-300">
-                                        {heightItem.cartQuantity}
-                                      </div>
-                                    </td>
-                                    <td className="p-1  sm:p-4">
-                                      <button onClick={()=>handlePriceEdit(sizeItem,heightItem,heightItem.price)} className="text-zince-300 bg-gray-700 px-1 rounded-sm">
-                                        {heightItem.price}
-                                      </button>
-                                    </td>
-                                    <td className="p-1  sm:p-4">
-                                      <div className="text-zinc-300">
-                                        {heightItem.price *
-                                          heightItem.cartQuantity}
+                                      <td className="p-2 align-middle sm:p-4">
+                                        <div className="text-zinc-300">
+                                          {heightItem.cartQuantity}
+                                        </div>
+                                      </td>
+                                      <td className="p-1  sm:p-4">
+                                        <button
+                                          onClick={() =>
+                                            handlePriceEdit(
+                                              sizeItem,
+                                              heightItem,
+                                              heightItem.price
+                                            )
+                                          }
+                                          className="text-zince-300 bg-gray-700 px-1 rounded-sm"
+                                        >
+                                          {heightItem.price}
+                                        </button>
+                                      </td>
+                                      <td className="p-1  sm:p-4">
+                                        <div className="text-zinc-300">
+                                          {heightItem.price *
+                                            heightItem.cartQuantity}
 
-                                          <p className="hidden">
+                                          {/* <p className="hidden">
 
                                           {total+(heightItem.price *
                                           heightItem.cartQuantity)}
-                                          </p>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                )
-                              )}
-                            </Fragment>
-                          ))}
-                        </tbody>
-                      </table>
+                                          </p> */}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                                )}
+                              </Fragment>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        </div>
       </div>
-
 
       {/*<!--============== Price Input MOdal ==============-->*/}
 
@@ -525,7 +575,7 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
             </label>
             <input
               type="number"
-               placeholder="2000"
+              placeholder="2000"
               value={priceInput}
               onChange={(e) => handleInputPriceChange(e)}
               name="price"
@@ -564,7 +614,6 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
             </label>
             <input
               type="number"
-             
               placeholder="N/A"
               value={priceInput}
               onChange={(e) => handleInputPriceChange(e)}
@@ -587,6 +636,16 @@ const Cart = ({ data, setData, additionalInfo=null,validationArray}) => {
           <i className="ri-close-large-line"></i>
         </button>
       </div>
+
+
+     <Alert
+        showAlert={showAlert}
+        alertType={alertType}
+        alertMessage={alertMessage}
+        onClose={() => setShowAlert(false)}
+      />
+
+    
     </>
   );
 };

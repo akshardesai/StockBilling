@@ -46,7 +46,7 @@ const Stock = () => {
     const response = await addProduct(newsize);
 
     if (response.success) {
-      setProducts((prev) => [...prev, response.data]);
+      setProducts((prev) => [response.data,...prev ]);
 
       closeProductModal();
 

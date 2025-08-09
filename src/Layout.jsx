@@ -9,6 +9,7 @@ function Layout() {
     window.matchMedia("(min-width: 1024px)").matches
   );
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const[confirmModal,setConfirmModal]=useState(false)
   const navigate = useNavigate();
 
   const toggleSlider = () => {
@@ -97,7 +98,8 @@ function Layout() {
             </li>
             <li className="px-2 py-1 bg-neutral-900 rounded-full flex items-center justify-center">
               <button
-                onClick={handleLogout}
+                onClick={()=>{setConfirmModal(true) 
+                  toggleSlider()}}
                 disabled={isLoggingOut}
                 className={`text-white hover:text-red-400 transition-colors ${
                   isLoggingOut ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
@@ -127,6 +129,58 @@ function Layout() {
         </div>
       </aside>
       <Outlet />
+
+
+
+
+      {confirmModal&&(
+          <>
+      {/* Backdrop overlay */}
+      <div
+        className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300 ease-out `}
+      />
+
+      <div
+        id="deleteModal"
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2    w-[90%] max-w-md mx-auto p-6 z-50
+        bg-gray-900 backdrop-blur-xl
+        border-2 border-red-400/30 rounded-2xl shadow-2xl
+        transition-all duration-300 ease-out
+
+        "
+      >
+        {/* <!-- Modal content --> */}
+        <div className="flex flex-col items-center">
+          <h2 className="text-xl font-bold text-white"> Logout ?</h2>
+          {/* <p className="text-white mt-2 text-center font-light">Are you sure you want to logout</p> */}
+          {/* <!-- Buttons --> */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={handleLogout}
+              id="confirmDelete"
+              className="bg-red-500 text-white hover:bg-red-400 active:bg-red-600  px-4 py-2 rounded-md transition duration-300"
+            >
+              Yes
+            </button>
+            <button
+              onClick={()=>setConfirmModal(false)}
+              id="cancelDelete"
+              className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+
+      
+
+
+
+    </>
+      )}
     </>
   );
 }

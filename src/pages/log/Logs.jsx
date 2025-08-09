@@ -162,6 +162,19 @@ const Logs = () => {
                       {/* Hover effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-[#BEF264]/0 to-[#BEF264]/0 group-hover:from-[#BEF264]/5 group-hover:to-[#BEF264]/10 transition-all duration-300 rounded-lg sm:rounded-xl" />
                     </button>
+                    <button
+                      onClick={()=>setActiveFilter(2)}
+                      className={`group relative overflow-hidden rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300 hover:scale-105 flex-shrink-0 min-w-[60px] sm:min-w-[80px] shadow-md ${activeFilter===2?"bg-[#BEF264] text-black":"bg-zinc-800/50 hover:bg-zinc-700/50 border border-zinc-700 hover:border-zinc-600"}`}
+                    >
+                      <div className="flex flex-col items-center space-y-1 sm:space-y-2">
+                        <span className="font-medium text-xs sm:text-sm whitespace-nowrap">
+                           Invoicing Page
+                        </span>
+                      </div>
+
+                      {/* Hover effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#BEF264]/0 to-[#BEF264]/0 group-hover:from-[#BEF264]/5 group-hover:to-[#BEF264]/10 transition-all duration-300 rounded-lg sm:rounded-xl" />
+                    </button>
                   </div>
                 </div>
               </div>
